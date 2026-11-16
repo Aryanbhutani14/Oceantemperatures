@@ -1,0 +1,230 @@
+{
+  "generated_at": "2026-11-16T23:04:46Z",
+  "sources": {
+    "glorys": {
+      "n_files": 12,
+      "expected_files": 12,
+      "total_MB": 1765.5,
+      "complete": true,
+      "problems": [],
+      "example": {
+        "dims": {
+          "time": 31,
+          "depth": 47,
+          "latitude": 105,
+          "longitude": 245
+        },
+        "lat_range": [
+          4.5,
+          30.5
+        ],
+        "lon_range": [
+          44.5,
+          105.5
+        ],
+        "depth_range": [
+          0.5057600140571594,
+          1045.854248046875
+        ],
+        "vars": {
+          "thetao_glor": {
+            "units": "degrees_C",
+            "nan_frac_sample": 0.5198,
+            "min": 17.560001373291016,
+            "max": 30.334123611450195
+          }
+        }
+      }
+    },
+    "glorys_clim": {
+      "n_files": 1,
+      "expected_files": 1,
+      "total_MB": 198.2,
+      "complete": true,
+      "problems": [],
+      "example": {
+        "dims": {
+          "time": 12,
+          "depth": 36,
+          "latitude": 313,
+          "longitude": 733
+        },
+        "lat_range": [
+          4.5,
+          30.5
+        ],
+        "lon_range": [
+          44.5,
+          105.5
+        ],
+        "depth_range": [
+          0.49402499198913574,
+          1062.43994140625
+        ],
+        "vars": {
+          "thetao": {
+            "units": "degrees_C",
+            "nan_frac_sample": 0.5119,
+            "min": 15.514725185930729,
+            "max": 33.898342832922935
+          }
+        }
+      }
+    },
+    "sst": {
+      "n_files": 12,
+      "expected_files": 12,
+      "total_MB": 463.6,
+      "complete": true,
+      "problems": [],
+      "example": {
+        "dims": {
+          "time": 31,
+          "latitude": 520,
+          "longitude": 1220
+        },
+        "lat_range": [
+          4.525000095367432,
+          30.475000381469727
+        ],
+        "lon_range": [
+          44.525001525878906,
+          105.4749984741211
+        ],
+        "depth_range": null,
+        "vars": {
+          "analysed_sst": {
+            "units": "kelvin",
+            "nan_frac_sample": 0.5093,
+            "min": 273.1499938964844,
+            "max": 303.8499932102859
+          }
+        }
+      }
+    },
+    "sss": {
+      "n_files": 12,
+      "expected_files": 12,
+      "total_MB": 148.5,
+      "complete": true,
+      "problems": [],
+      "example": {
+        "dims": {
+          "time": 31,
+          "depth": 1,
+          "latitude": 208,
+          "longitude": 488
+        },
+        "lat_range": [
+          4.5625,
+          30.4375
+        ],
+        "lon_range": [
+          44.5625,
+          105.4375
+        ],
+        "depth_range": null,
+        "vars": {
+          "sos": {
+            "units": ".001",
+            "nan_frac_sample": 0.5117,
+            "min": 27.553123474121094,
+            "max": 40.027652740478516
+          }
+        }
+      }
+    },
+    "ssh": {
+      "n_files": 12,
+      "expected_files": 12,
+      "total_MB": 445.0,
+      "complete": true,
+      "problems": [],
+      "example": {
+        "dims": {
+          "time": 31,
+          "latitude": 208,
+          "longitude": 488
+        },
+        "lat_range": [
+          4.5625,
+          30.4375
+        ],
+        "lon_range": [
+          44.5625,
+          105.4375
+        ],
+        "depth_range": null,
+        "vars": {
+          "sla": {
+            "units": "m",
+            "nan_frac_sample": 0.5013,
+            "min": -0.19190000000000002,
+            "max": 0.5071
+          },
+          "ugos": {
+            "units": "m/s",
+            "nan_frac_sample": 0.5047,
+            "min": -1.8335000000000001,
+            "max": 1.6725
+          },
+          "vgos": {
+            "units": "m/s",
+            "nan_frac_sample": 0.5047,
+            "min": -1.2013,
+            "max": 2.2154000000000003
+          }
+        }
+      }
+    },
+    "winds": {
+      "n_files": 12,
+      "expected_files": 12,
+      "total_MB": 3557.1,
+      "complete": true,
+      "problems": [],
+      "example": {
+        "dims": {
+          "time": 744,
+          "latitude": 208,
+          "longitude": 488
+        },
+        "lat_range": [
+          4.5625,
+          30.4375
+        ],
+        "lon_range": [
+          44.5625,
+          105.4375
+        ],
+        "depth_range": null,
+        "vars": {
+          "eastward_wind": {
+            "units": "m s-1",
+            "nan_frac_sample": 0.0,
+            "min": -12.64,
+            "max": 11.52
+          },
+          "northward_wind": {
+            "units": "m s-1",
+            "nan_frac_sample": 0.0,
+            "min": -13.14,
+            "max": 11.07
+          }
+        }
+      }
+    },
+    "argo": {
+      "n_files": 4071,
+      "expected_files": 4071,
+      "total_MB": 242.9,
+      "complete": true
+    },
+    "ibtracs": {
+      "n_files": 1,
+      "expected_files": 1,
+      "total_MB": 27.9,
+      "complete": true
+    }
+  }
+}

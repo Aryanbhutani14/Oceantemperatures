@@ -12,8 +12,8 @@ We reconstruct ocean temperature at **15 depths (0–1000 m)** over the **North 
 
 | Phase | What | Status |
 |---|---|---|
-| **0** | Problem and dataset audit | ✅ **Complete**, awaiting approval |
-| 1 | Data download | ⏳ Not started |
+| 0 | Problem and dataset audit | ✅ Complete |
+| **1** | Data download (6.8 GB, all files verified) | ✅ **Complete**, awaiting approval — [details](docs/phase1_acquisition.md) |
 | 2 | Harmonisation onto one common grid | ⏳ |
 | 3 | Integration (data cube) + EDA | ⏳ |
 | 4 | Feature engineering + train/test split | ⏳ |
@@ -66,11 +66,13 @@ configs/
   grid.yaml            # canonical grid, depths, regions (single source of truth)
   datasets.yaml        # every dataset: product ID, variables, role, period, splits
 scripts/audit/         # Phase 0: catalogue queries + grid-alignment analysis
-data/audit/            # Phase 0 results (JSON, committed)
+scripts/download/      # Phase 1: CMEMS / ARGO / IBTrACS download + verification
+data/audit/            # Phase 0-1 results (JSON, committed)
 data/raw|interim|processed|final/   # created by later phases, not committed
 docs/
   dataset_inventory.md # what each dataset is, how it maps to our grid
   decisions.md         # decision log
+  phase1_acquisition.md # what was downloaded, checks, findings
 ```
 
 ## Reproduce Phase 0
@@ -83,7 +85,19 @@ python -m venv .venv
 .venv/Scripts/python scripts/audit/grid_alignment_and_volume.py
 ```
 
-No login is needed for the audit. Phase 1 (download) needs a free [Copernicus Marine](https://data.marine.copernicus.eu) account.
+No login is needed for the audit.
+
+## Reproduce Phase 1 (download, ~6.8 GB)
+
+Needs a free [Copernicus Marine](https://data.marine.copernicus.eu) account. Log in once with `copernicusmarine login` (in PowerShell: `& ".venv/Scripts/copernicusmarine.exe" login`).
+
+```bash
+.venv/Scripts/python scripts/download/download_cmems.py --source all    # glorys, glorys_clim, sst, sss, ssh, winds
+.venv/Scripts/python scripts/download/download_argo_ibtracs.py
+.venv/Scripts/python scripts/download/verify_raw.py
+```
+
+Downloads are month by month and resumable: rerun the same command after an interruption.
 
 ## References
 
