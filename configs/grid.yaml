@@ -1,0 +1,39 @@
+# ============================================================================
+# Canonical grid — single source of truth for the spatial/temporal/vertical index.
+# Values marked [PS] come from the official SIH26066 problem statement and must
+# not be changed.
+# ============================================================================
+
+# [PS] North Indian Ocean. Values are CELL CENTRES; cell (i, j) spans
+# [lat - res/2, lat + res/2] x [lon - res/2, lon + res/2].
+domain:
+  lat_min: 5.0     # [PS]
+  lat_max: 30.0    # [PS]
+  lon_min: 45.0    # [PS]
+  lon_max: 105.0   # [PS]
+  res: 0.25        # [PS] -> 101 lats x 241 lons = 24,341 cells
+  lon_convention: "[-180, 180)"   # domain is entirely east of 0 deg; unaffected either way
+  lat_order: ascending
+
+# Canonical keys
+index:
+  surface_key: [time, cell_id]            # cell_id = lat_idx * 241 + lon_idx (int32)
+  subsurface_key: [time, cell_id, depth_idx]
+  time_dtype: "datetime64[D]"             # UTC calendar day
+  time_reference: UTC
+
+# [PS] Standard depths in metres. Order matters (depth_idx 0..14).
+depths: [0, 5, 10, 20, 30, 50, 75, 100, 125, 150, 200, 300, 500, 700, 1000]
+
+# [PS] "PoC over the Bay of Bengal / Arabian Sea" — evaluation sub-regions
+regions:
+  arabian_sea:   {lat: [5.0, 25.0], lon: [50.0, 75.0]}
+  bay_of_bengal: {lat: [5.0, 23.0], lon: [80.0, 100.0]}
+
+# Padding added to the download bounding box so regridding operators have full
+# stencils at the domain edge (cropped after harmonisation).
+download_pad_deg: 0.5
+
+# Spatial blocks for spatial-holdout evaluation (Phase 6)
+spatial_blocks:
+  size_deg: 5.0

@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-11-16T19:31:57Z",
+  "period": [
+    "2016-01-01",
+    "2021-12-31"
+  ],
+  "collections": {
+    "oscar": {
+      "short_name": "OSCAR_L4_OC_FINAL_V2.0",
+      "error": "ReadTimeout: HTTPSConnectionPool(host='cmr.earthdata.nasa.gov', port=443): Read timed out. (read timeout=180)"
+    },
+    "ccmp": {
+      "short_name": "CCMP_WINDS_10M6HR_L4_V3.1",
+      "error": "ConnectionError: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    }
+  }
+}

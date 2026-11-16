@@ -1,0 +1,10 @@
+# Phase 0 (audit) dependencies. Pinned to the versions verified to work together
+# on Windows / Python 3.13. Later phases will add their own pins.
+copernicusmarine==2.5.1
+earthaccess==0.19.0
+argopy==1.4.0
+erddapy==2.2.4        # argopy 1.4.0 is incompatible with erddapy 3.x
+xarray==2025.9.0
+netCDF4
+pyyaml
+requests

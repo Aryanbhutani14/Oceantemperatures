@@ -1,0 +1,380 @@
+{
+  "canonical": {
+    "res": 0.25,
+    "lat0": 5.0,
+    "lon0": 45.0,
+    "edge_phase": 0.125
+  },
+  "n_days": 365,
+  "sources": {
+    "glorys_ens (target)": {
+      "native_step_deg": 0.25,
+      "native_lat0": -80.0,
+      "native_lon0": -180.0,
+      "centre_offset_deg": [
+        0.0,
+        0.0
+      ],
+      "ratio": 1.0,
+      "operator": "exact_select",
+      "reason": "native centres coincide with canonical centres",
+      "vertical": {
+        "n_native_levels_total": 75,
+        "n_levels_to_download": 47,
+        "deepest_level_needed": 1045.8542,
+        "bracketing": {
+          "0": {
+            "uses": 0.5058,
+            "note": "shallowest native level (no extrapolation)"
+          },
+          "5": {
+            "lower": 3.8563,
+            "upper": 5.1404
+          },
+          "10": {
+            "lower": 9.8228,
+            "upper": 11.7737
+          },
+          "20": {
+            "lower": 19.4298,
+            "upper": 22.7576
+          },
+          "30": {
+            "lower": 26.5583,
+            "upper": 30.8746
+          },
+          "50": {
+            "lower": 47.2119,
+            "upper": 53.8506
+          },
+          "75": {
+            "lower": 69.0217,
+            "upper": 77.6112
+          },
+          "100": {
+            "lower": 97.0413,
+            "upper": 108.0303
+          },
+          "125": {
+            "lower": 120.0,
+            "upper": 133.0758
+          },
+          "150": {
+            "lower": 147.4062,
+            "upper": 163.1645
+          },
+          "200": {
+            "lower": 199.79,
+            "upper": 221.1412
+          },
+          "300": {
+            "lower": 271.3564,
+            "upper": 300.8875
+          },
+          "500": {
+            "lower": 457.6256,
+            "upper": 508.6399
+          },
+          "700": {
+            "lower": 697.2587,
+            "upper": 773.3683
+          },
+          "1000": {
+            "lower": 947.4479,
+            "upper": 1045.8542
+          }
+        }
+      },
+      "volume_estimate": {
+        "n_lat": 105,
+        "n_lon": 245,
+        "n_time": 365,
+        "n_levels": 47,
+        "n_vars": 1,
+        "uncompressed_GB_float32": 1.77
+      },
+      "time_coverage": [
+        "1993-01-01T00:00:00Z",
+        "2025-12-31T00:00:00Z"
+      ]
+    },
+    "glorys12 (target alt.)": {
+      "native_step_deg": 0.08333333333333333,
+      "native_lat0": -80.0,
+      "native_lon0": -180.0,
+      "centre_offset_deg": [
+        0.0,
+        0.0
+      ],
+      "ratio": 3.0,
+      "operator": "block_mean_3x3",
+      "reason": "3x3 native cells nest exactly inside each canonical cell (edges coincide) -> block mean is exactly area-conservative",
+      "vertical": {
+        "n_native_levels_total": 50,
+        "n_levels_to_download": 36,
+        "deepest_level_needed": 1062.4399,
+        "bracketing": {
+          "0": {
+            "uses": 0.494,
+            "note": "shallowest native level (no extrapolation)"
+          },
+          "5": {
+            "lower": 3.8195,
+            "upper": 5.0782
+          },
+          "10": {
+            "lower": 9.573,
+            "upper": 11.405
+          },
+          "20": {
+            "lower": 18.4956,
+            "upper": 21.5988
+          },
+          "30": {
+            "lower": 29.4447,
+            "upper": 34.4342
+          },
+          "50": {
+            "lower": 47.3737,
+            "upper": 55.7643
+          },
+          "75": {
+            "lower": 65.8073,
+            "upper": 77.8539
+          },
+          "100": {
+            "lower": 92.3261,
+            "upper": 109.7293
+          },
+          "125": {
+            "lower": 109.7293,
+            "upper": 130.666
+          },
+          "150": {
+            "lower": 130.666,
+            "upper": 155.8507
+          },
+          "200": {
+            "lower": 186.1256,
+            "upper": 222.4752
+          },
+          "300": {
+            "lower": 266.0403,
+            "upper": 318.1274
+          },
+          "500": {
+            "lower": 453.9377,
+            "upper": 541.0889
+          },
+          "700": {
+            "lower": 643.5668,
+            "upper": 763.3331
+          },
+          "1000": {
+            "lower": 902.3393,
+            "upper": 1062.4399
+          }
+        }
+      },
+      "volume_estimate": {
+        "n_lat": 313,
+        "n_lon": 733,
+        "n_time": 365,
+        "n_levels": 36,
+        "n_vars": 1,
+        "uncompressed_GB_float32": 12.06
+      },
+      "time_coverage": [
+        "1993-01-01T00:00:00Z",
+        "2026-09-22T00:00:00Z"
+      ]
+    },
+    "glorys12_clim (baseline)": {
+      "native_step_deg": 0.08333333333333333,
+      "native_lat0": -80.0,
+      "native_lon0": -180.0,
+      "centre_offset_deg": [
+        0.0,
+        0.0
+      ],
+      "ratio": 3.0,
+      "operator": "block_mean_3x3",
+      "reason": "3x3 native cells nest exactly inside each canonical cell (edges coincide) -> block mean is exactly area-conservative",
+      "vertical": {
+        "n_native_levels_total": 50,
+        "n_levels_to_download": 36,
+        "deepest_level_needed": 1062.4399,
+        "bracketing": {
+          "0": {
+            "uses": 0.494,
+            "note": "shallowest native level (no extrapolation)"
+          },
+          "5": {
+            "lower": 3.8195,
+            "upper": 5.0782
+          },
+          "10": {
+            "lower": 9.573,
+            "upper": 11.405
+          },
+          "20": {
+            "lower": 18.4956,
+            "upper": 21.5988
+          },
+          "30": {
+            "lower": 29.4447,
+            "upper": 34.4342
+          },
+          "50": {
+            "lower": 47.3737,
+            "upper": 55.7643
+          },
+          "75": {
+            "lower": 65.8073,
+            "upper": 77.8539
+          },
+          "100": {
+            "lower": 92.3261,
+            "upper": 109.7293
+          },
+          "125": {
+            "lower": 109.7293,
+            "upper": 130.666
+          },
+          "150": {
+            "lower": 130.666,
+            "upper": 155.8507
+          },
+          "200": {
+            "lower": 186.1256,
+            "upper": 222.4752
+          },
+          "300": {
+            "lower": 266.0403,
+            "upper": 318.1274
+          },
+          "500": {
+            "lower": 453.9377,
+            "upper": 541.0889
+          },
+          "700": {
+            "lower": 643.5668,
+            "upper": 763.3331
+          },
+          "1000": {
+            "lower": 902.3393,
+            "upper": 1062.4399
+          }
+        }
+      },
+      "volume_estimate": {
+        "n_lat": 313,
+        "n_lon": 733,
+        "n_time": 12,
+        "n_levels": 36,
+        "n_vars": 1,
+        "uncompressed_GB_float32": 0.4
+      },
+      "time_coverage": [
+        "2004-01-01T00:00:00Z",
+        "2004-12-01T00:00:00Z"
+      ]
+    },
+    "ostia_rep (sst)": {
+      "native_step_deg": 0.049999999152053956,
+      "native_lat0": -89.9749984741211,
+      "native_lon0": -179.97500610351562,
+      "centre_offset_deg": [
+        0.025002,
+        0.024994
+      ],
+      "ratio": 5.0,
+      "operator": "conservative_area_weighted",
+      "reason": "native edges (phase 2e-06,0.249994) do NOT coincide with canonical edges (phase 0.125); a 5x5 block mean would mix partial cells / shift the field -> use area-weighted overlap",
+      "volume_estimate": {
+        "n_lat": 522,
+        "n_lon": 1222,
+        "n_time": 365,
+        "n_levels": 1,
+        "n_vars": 1,
+        "uncompressed_GB_float32": 0.93
+      },
+      "time_coverage": [
+        "1981-10-01T00:00:00Z",
+        "2026-06-30T00:00:00Z"
+      ]
+    },
+    "sss_multiobs (sss)": {
+      "native_step_deg": 0.125,
+      "native_lat0": -89.9375,
+      "native_lon0": -179.9375,
+      "centre_offset_deg": [
+        0.0625,
+        0.0625
+      ],
+      "ratio": 2.0,
+      "operator": "block_mean_2x2",
+      "reason": "2x2 native cells nest exactly inside each canonical cell (edges coincide) -> block mean is exactly area-conservative",
+      "volume_estimate": {
+        "n_lat": 209,
+        "n_lon": 489,
+        "n_time": 365,
+        "n_levels": 1,
+        "n_vars": 1,
+        "uncompressed_GB_float32": 0.15
+      },
+      "time_coverage": [
+        "1993-01-01T00:00:00Z",
+        "2024-12-15T00:00:00Z"
+      ]
+    },
+    "duacs (sla, ugos, vgos)": {
+      "native_step_deg": 0.125,
+      "native_lat0": -89.9375,
+      "native_lon0": -179.9375,
+      "centre_offset_deg": [
+        0.0625,
+        0.0625
+      ],
+      "ratio": 2.0,
+      "operator": "block_mean_2x2",
+      "reason": "2x2 native cells nest exactly inside each canonical cell (edges coincide) -> block mean is exactly area-conservative",
+      "volume_estimate": {
+        "n_lat": 209,
+        "n_lon": 489,
+        "n_time": 365,
+        "n_levels": 1,
+        "n_vars": 3,
+        "uncompressed_GB_float32": 0.45
+      },
+      "time_coverage": [
+        "1993-01-01T00:00:00Z",
+        "2026-05-15T00:00:00Z"
+      ]
+    },
+    "cmems_winds 0.125 (u10, v10)": {
+      "native_step_deg": 0.125,
+      "native_lat0": -89.9375,
+      "native_lon0": -179.9375,
+      "centre_offset_deg": [
+        0.0625,
+        0.0625
+      ],
+      "ratio": 2.0,
+      "operator": "block_mean_2x2",
+      "reason": "2x2 native cells nest exactly inside each canonical cell (edges coincide) -> block mean is exactly area-conservative",
+      "volume_estimate": {
+        "n_lat": 209,
+        "n_lon": 489,
+        "n_time": 8760,
+        "n_levels": 1,
+        "n_vars": 2,
+        "uncompressed_GB_float32": 7.16
+      },
+      "time_coverage": [
+        "2007-01-11T00:00:00Z",
+        "2026-07-21T23:00:00Z"
+      ]
+    }
+  }
+}

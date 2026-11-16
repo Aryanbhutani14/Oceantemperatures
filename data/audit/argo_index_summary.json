@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-11-16T19:35:54Z",
+  "box": [
+    45.0,
+    105.0,
+    5.0,
+    30.0
+  ],
+  "period": [
+    "2021-01-01",
+    "2021-12-31"
+  ],
+  "index_url": "https://data-argo.ifremer.fr/ar_index_global_prof.txt.gz",
+  "index_cached_at": "data\\raw\\argo\\index\\ar_index_global_prof.txt.gz",
+  "index_total_profiles_global": 3439266,
+  "n_profiles": 4071,
+  "n_floats": 99,
+  "n_delayed_mode": 3724,
+  "n_realtime": 347,
+  "profiles_per_month": {
+    "2021-01": 327,
+    "2021-02": 292,
+    "2021-03": 325,
+    "2021-04": 298,
+    "2021-05": 388,
+    "2021-06": 387,
+    "2021-07": 394,
+    "2021-08": 372,
+    "2021-09": 334,
+    "2021-10": 343,
+    "2021-11": 313,
+    "2021-12": 298
+  },
+  "n_profiles_arabian_sea": 2858,
+  "n_profiles_bay_of_bengal": 1024,
+  "dacs": {
+    "IN": 1397,
+    "IF": 1386,
+    "HZ": 584,
+    "AO": 511,
+    "BO": 142,
+    "CS": 51
+  },
+  "source": "Argo GDAC global profile index (read directly)"
+}

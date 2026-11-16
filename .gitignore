@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.ipynb_checkpoints/
+
+# Data — raw/processed data are never committed (provenance is tracked in docs/
+# and manifests). Small audit JSONs ARE committed so results are reviewable.
+data/*
+!data/audit/
+!data/README.md
+
+# Model artifacts / experiment outputs (large)
+models/
+experiments/*/model*
+*.zarr/
+*.nc
+*.parquet
+
+# Credentials
+.env
+*.netrc
+.copernicusmarine/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

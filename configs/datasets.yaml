@@ -1,0 +1,121 @@
+# ============================================================================
+# Candidate datasets (Phase 0). Every entry is a CANDIDATE until the audit
+# (data/audit/*.json + docs/dataset_inventory.md) confirms it.
+# role: target | input | validation | auxiliary
+# ============================================================================
+
+period:
+  # ONE year (deadline constraint, decision D-003). 2021 contains cyclones
+  # Tauktae, Yaas (May), Gulab/Shaheen (Sep-Oct), Jawad (Dec) and 4,071 ARGO profiles.
+  start: "2021-01-01"
+  end: "2021-12-31"
+
+# Within-year split by whole months (decision D-008): one test month per season,
+# a 7-day buffer is removed from training days adjacent to every test month.
+splits:
+  test_months: [2, 5, 8, 11]          # Feb (winter), May (pre-monsoon), Aug (monsoon), Nov (post-monsoon)
+  train_months: [1, 3, 4, 6, 7, 9, 10, 12]
+  buffer_days: 7
+  cv: "GroupKFold over train months (groups = month)"
+
+sources:
+  # ---------------- TARGET ----------------
+  glorys_ens:
+    role: target
+    provider: CMEMS
+    product_id: GLOBAL_MULTIYEAR_PHY_ENS_001_031
+    dataset_id: cmems_mod_glo_phy-all_my_0.25deg_P1D-m
+    variables: {thetao: thetao_glor}
+    note: "GLORYS member of the CMEMS ensemble reanalysis, native 0.25 deg"
+
+  glorys12_climatology:
+    role: baseline
+    provider: CMEMS
+    product_id: GLOBAL_MULTIYEAR_PHY_001_030
+    dataset_id: cmems_mod_glo_phy_my_0.083deg-climatology_P1M-m
+    variables: {thetao: thetao}
+    note: "External monthly climatology (multi-decade, built outside 2021) -> climatology baseline and anomaly target with no leakage from our year"
+
+  glorys12:
+    role: target_alternative
+    provider: CMEMS
+    product_id: GLOBAL_MULTIYEAR_PHY_001_030
+    dataset_id: cmems_mod_glo_phy_my_0.083deg_P1D-m
+    variables: {thetao: thetao}
+    note: "GLORYS12V1, 1/12 deg; used for a fidelity cross-check / static mask"
+
+  # ---------------- INPUTS ----------------
+  ostia_rep:
+    role: input
+    provider: CMEMS
+    product_id: SST_GLO_SST_L4_REP_OBSERVATIONS_010_011
+    variables: {sst: analysed_sst}
+
+  ostia_nrt:
+    role: input_alternative
+    provider: CMEMS
+    product_id: SST_GLO_SST_L4_NRT_OBSERVATIONS_010_001
+    variables: {sst: analysed_sst}
+    note: "Only needed if the REP record ends before the chosen period ends"
+
+  sss_multiobs:
+    role: input
+    provider: CMEMS
+    product_id: MULTIOBS_GLO_PHY_S_SURFACE_MYNRT_015_013
+    dataset_id: cmems_obs-mob_glo_phy-sss_my_multi_P1D
+    doi: 10.48670/moi-00051
+    variables: {sss: sos}
+    note: "Multi-mission (SMOS+SMAP+Aquarius) + in-situ OI. Corrected ID: the planned 'MULTIOBS_GLO_PHY_SSS_L4_MY_014_001' does not exist in the catalogue."
+
+  sss_smos_smap_oi:
+    role: input_alternative
+    provider: CMEMS
+    product_id: MULTIOBS_GLO_PHY_SSS_L4_MY_015_015
+    variables: {sss: sos}
+    note: "SMOS/SMAP-only OI (LOPS); 7-day product — satellite-only fallback"
+
+  duacs:
+    role: input
+    provider: CMEMS
+    product_id: SEALEVEL_GLO_PHY_L4_MY_008_047
+    variables: {sla: sla, ugos: ugos, vgos: vgos}
+
+  oscar:
+    role: input_optional
+    provider: PODAAC
+    short_name: OSCAR_L4_OC_FINAL_V2.0
+    variables: {uo: u, vo: v}
+    note: "Needs NASA Earthdata login. Default currents = DUACS geostrophic ugos/vgos (decision D-009)"
+
+  ccmp:
+    role: input_optional
+    provider: PODAAC
+    short_name: CCMP_WINDS_10M6HR_L4_V3.1
+    variables: {u10: uwnd, v10: vwnd}
+
+  cmems_winds:
+    role: input
+    provider: CMEMS
+    product_id: WIND_GLO_PHY_L4_MY_012_006
+    dataset_id: cmems_obs-wind_glo_phy_my_l4_0.125deg_PT1H
+    variables: {u10: eastward_wind, v10: northward_wind}
+
+  # ---------------- VALIDATION ----------------
+  argo:
+    role: validation
+    provider: ARGO_GDAC
+    access: argopy
+    variables: {temp: TEMP, psal: PSAL, pres: PRES}
+
+  # ---------------- AUXILIARY / INDEPENDENT REFERENCE ----------------
+  armor3d:
+    role: auxiliary
+    provider: CMEMS
+    product_id: MULTIOBS_GLO_PHY_TSUV_3D_MYNRT_015_012
+    dataset_id: cmems_obs-mob_glo_phy_my_0.125deg_P1D-m
+    note: "ARMOR3D: observation-based (statistical) 3D T/S. Candidate second reference for comparison; never a feature."
+
+  ibtracs:
+    role: auxiliary
+    provider: NOAA_NCEI
+    note: "Cyclone tracks for event-based evaluation only (never a feature)"
