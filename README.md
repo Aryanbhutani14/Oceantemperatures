@@ -13,8 +13,8 @@ We reconstruct ocean temperature at **15 depths (0–1000 m)** over the **North 
 | Phase | What | Status |
 |---|---|---|
 | 0 | Problem and dataset audit | ✅ Complete |
-| **1** | Data download (6.8 GB, all files verified) | ✅ **Complete**, awaiting approval — [details](docs/phase1_acquisition.md) |
-| 2 | Harmonisation onto one common grid | ⏳ |
+| 1 | Data download (6.8 GB, all files verified) | ✅ Complete — [details](docs/phase1_acquisition.md) |
+| **2** | Harmonisation onto one common grid (11,880 ocean cells × 365 days × 15 depths) | ✅ **Complete**, awaiting approval — [details](docs/phase2_harmonisation.md) |
 | 3 | Integration (data cube) + EDA | ⏳ |
 | 4 | Feature engineering + train/test split | ⏳ |
 | 5 | Models (baselines → linear → trees → ensembles) | ⏳ |
@@ -62,17 +62,22 @@ All decisions and their reasons: [docs/decisions.md](docs/decisions.md).
 ## Repository layout
 
 ```text
+src/oceanembed_ml/      # reusable code (grid + conservative regridder + vertical interpolation)
+tests/                 # unit tests (pytest)
+reports/figures/       # generated figures (committed)
 configs/
   grid.yaml            # canonical grid, depths, regions (single source of truth)
   datasets.yaml        # every dataset: product ID, variables, role, period, splits
 scripts/audit/         # Phase 0: catalogue queries + grid-alignment analysis
 scripts/download/      # Phase 1: CMEMS / ARGO / IBTrACS download + verification
+scripts/harmonise/     # Phase 2: harmonise every source onto the canonical grid + figures
 data/audit/            # Phase 0-1 results (JSON, committed)
 data/raw|interim|processed|final/   # created by later phases, not committed
 docs/
   dataset_inventory.md # what each dataset is, how it maps to our grid
   decisions.md         # decision log
   phase1_acquisition.md # what was downloaded, checks, findings
+  phase2_harmonisation.md # how every dataset was mapped onto the common grid
 ```
 
 ## Reproduce Phase 0
@@ -98,6 +103,17 @@ Needs a free [Copernicus Marine](https://data.marine.copernicus.eu) account. Log
 ```
 
 Downloads are month by month and resumable: rerun the same command after an interruption.
+
+## Reproduce Phase 2 (harmonisation, ~15 min)
+
+```bash
+.venv/Scripts/python -m pytest -q tests                                  # regridding unit tests
+.venv/Scripts/python scripts/harmonise/harmonise.py --source glorys      # target + masks (run first)
+.venv/Scripts/python scripts/harmonise/harmonise.py --source all
+.venv/Scripts/python scripts/harmonise/plot_phase2.py
+```
+
+![SST native vs harmonised](reports/figures/phase2/compare_sst.png)
 
 ## References
 
