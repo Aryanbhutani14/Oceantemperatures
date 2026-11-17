@@ -29,3 +29,6 @@ experiments/*/model*
 Thumbs.db
 .vscode/
 .idea/
+
+# Large regenerable prediction arrays (rebuilt by scripts/05_models.py)
+results/**/*.npz

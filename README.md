@@ -16,8 +16,8 @@ We reconstruct ocean temperature at **15 depths (0–1000 m)** over the **North 
 | 1 | Data download (6.8 GB, all files verified) | ✅ Complete: [details](docs/phase1_acquisition.md) |
 | 2 | Harmonisation onto one common grid (11,880 ocean cells × 365 days × 15 depths) | ✅ Complete: [details](docs/phase2_harmonisation.md) |
 | 3 | Data cube + EDA + outlier/cyclone check | ✅ Complete: [details](docs/phase3_eda.md) |
-| **4** | Feature engineering (40 features, PCA surface embedding) + ML tables | ✅ **Complete**, awaiting approval: [details](docs/phase4_features.md) |
-| 5 | Models (baselines → linear → KNN/SVR → trees → ensembles; PCA regression) | ⏳ |
+| 4 | Feature engineering (40 features, PCA surface embedding) + ML tables | ✅ Complete: [details](docs/phase4_features.md) |
+| **5** | 13 models compared with CV + test; ablations; final model **RMSE 0.579 °C, skill 0.64** | ✅ **Complete**, awaiting approval: [details](docs/phase5_models.md) |
 | 6 | Evaluation (per depth, region, season, cyclone) + ARGO validation | ⏳ |
 | 7 | Ocean indicators (D20, D26, TCHP, MLD) + report | ⏳ |
 
@@ -61,11 +61,12 @@ src/oceanembed_ml/        # reusable, importable package (pip install -e .)
   data/                   #   Phase 1-3: download, verify, harmonise, build cube
   eda/                    #   Phase 3: statistics/figures, outlier vs cyclone screening
   features/               #   Phase 4: physics features (pure functions) + table builder
-  models/                 #   Phase 5: model pipelines (next)
+  models/                 #   Phase 5: model zoo, GD-from-scratch, metrics, CV/test, ablation, final model
   viz/                    #   figure helpers
-scripts/                  # thin CLIs, one per phase: 00_audit.py ... 04_features.py, make_notebooks.py
+scripts/                  # thin CLIs, one per phase: 00_audit.py ... 05_final_model.py, make_notebooks.py
 notebooks/                # executed exploration notebooks (read outputs; no pipeline logic)
-  01_data_audit.ipynb  02_harmonisation.ipynb  03_eda.ipynb  04_features.ipynb
+  01_data_audit.ipynb  02_harmonisation.ipynb  03_eda.ipynb  04_features.ipynb  05_models.ipynb
+results/phase5/           # metrics JSON of every model (committed); fitted models go to models/ (git-ignored)
 configs/                  # grid.yaml, datasets.yaml, features.yaml (single source of truth)
 tests/                    # pytest: regridding, physics features, leakage checks
 docs/                     # dataset inventory, decision log, one write-up per phase
@@ -88,7 +89,7 @@ Downloading needs a free [Copernicus Marine](https://data.marine.copernicus.eu) 
 ## Reproduce every phase
 
 ```bash
-.venv/Scripts/python -m pytest -q                                # 12 tests: regridding, features, leakage
+.venv/Scripts/python -m pytest -q                                # 16 tests: regridding, features, leakage, models
 .venv/Scripts/python scripts/00_audit.py                         # Phase 0  catalogue audit (no login)
 .venv/Scripts/python scripts/01_download.py cmems --source all   # Phase 1  ~6.8 GB, resumable
 .venv/Scripts/python scripts/01_download.py argo
@@ -99,10 +100,38 @@ Downloading needs a free [Copernicus Marine](https://data.marine.copernicus.eu) 
 .venv/Scripts/python scripts/03_build_cube.py                    # Phase 3  data cube + split labels
 .venv/Scripts/python scripts/03_eda.py
 .venv/Scripts/python scripts/04_features.py                      # Phase 4  features -> Parquet
+.venv/Scripts/python scripts/05_models.py                        # Phase 5  CV selection + test, 13 models (~2 h, SVR is slow)
+.venv/Scripts/python scripts/05_ablation.py                      #          feature/target/data-size ablations
+.venv/Scripts/python scripts/05_final_model.py                   #          target chosen by CV + final model
+.venv/Scripts/python scripts/05_plots.py
 .venv/Scripts/python scripts/make_notebooks.py                   # re-execute notebooks
 ```
 
-## Key results so far
+## Results (Phase 5): test months Feb/May/Aug/Nov, identical 200k rows
+
+All models are chosen by **GroupKFold-by-month cross-validation on the train months**; the test months were only used for the final scoring.
+
+| Model (CSE2032 topic) | Test RMSE °C | Skill vs climatology | RMSE at 100 m |
+|---|---|---|---|
+| Climatology (baseline) | 0.999 | 0.00 | 1.76 |
+| SST-only linear (baseline) | 0.862 | 0.31 | 1.59 |
+| Linear Regression / Ridge / Lasso | 0.738 | 0.45 | 1.31 |
+| **Linear Regression by gradient descent (from scratch)** | 0.743 | 0.44 | 1.32 |
+| Decision Tree | 0.743 | 0.45 | 1.30 |
+| KNN (k = 40) | 0.721 | 0.44 | 1.24 |
+| SVR (RBF) | 0.702 | 0.48 | 1.24 |
+| PCA regression (8 vertical modes + boosting) | 0.653 | 0.56 | 1.12 |
+| Bagging | 0.651 | 0.57 | 1.13 |
+| Random Forest | 0.639 | 0.59 | 1.11 |
+| Gradient Boosting (selected family) | 0.634 | 0.59 | 1.12 |
+| ✅ **Final: Gradient Boosting + climatology feature** | **0.579** | **0.64** | **0.98** |
+
+- **Best model's error by depth:** 0.38 °C at the surface, **0.98 °C in the thermocline (100 m)**, 0.17 °C at 1000 m.
+- **Bias:** every ML model removes the climatology's −0.32 °C bias (2021 was warmer than the long-term mean).
+
+![RMSE and skill by depth](reports/figures/phase5/01_rmse_skill_by_depth.png)
+
+## Key findings
 
 - **One regridding operator for every source** (area-conservative; unit-tested): identity for GLORYS, exact block means for nested grids, partial-cell weights for OSTIA.
 - **Real extremes are kept, not deleted:**

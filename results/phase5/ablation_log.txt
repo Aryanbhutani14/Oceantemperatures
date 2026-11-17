@@ -1,0 +1,12 @@
+  features direct_only (7 raw inputs)           RMSE=0.7872 skill=0.313 (63.7s)
+  features direct+geo+season                    RMSE=0.6709 skill=0.509 (66.4s)
+  features all_minus_embedding                  RMSE=0.6337 skill=0.594 (94.8s)
+  features all_minus_geographic                 RMSE=0.6878 skill=0.508 (103.4s)
+  features all_minus_temporal                   RMSE=0.6383 skill=0.585 (96.6s)
+  features all_minus_wind_forcing               RMSE=0.6338 skill=0.594 (97.5s)
+  features all_minus_gradients+neighbourhood    RMSE=0.6351 skill=0.592 (93.2s)
+  features all (40)                             RMSE=0.6343 skill=0.593 (102.5s)
+  target absolute                         RMSE=0.5857 skill=0.616
+  data   25000                            RMSE=0.6593 skill=0.557
+  data  100000                            RMSE=0.6384 skill=0.583
+[ablation] done

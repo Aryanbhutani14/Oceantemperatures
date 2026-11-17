@@ -56,8 +56,8 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
 | 1 Download | ✅ pushed | `data/raw/**` (6.8 GB, git-ignored), `data/audit/raw_verification.json` |
 | 2 Harmonise | ✅ pushed | `data/interim/*.nc`, conservative regridder in `src/oceanembed_ml/grid.py`, 6 unit tests |
 | 3 Cube + EDA | ✅ pushed | `data/processed/cube.nc`, `reports/figures/phase3/`, `docs/phase3_eda.md` |
-| 4 Features | ✅ committed (awaiting push approval) | `data/final/features/{train,test}.parquet` (2.25M / 1.43M rows, 40 features + 15×(clim, y, a)), `configs/features.yaml`, notebooks 01–04 |
-| 5 Models | ⏳ | baselines → linear → KNN/SVR → trees → ensembles; PCA regression |
+| 4 Features | ✅ pushed | `data/final/features/{train,test}.parquet` (2.25M / 1.43M rows, 40 features + 15×(clim, y, a)), `configs/features.yaml`, notebooks 01–04 |
+| 5 Models | ✅ done (awaiting approval) | `results/phase5/*.json`, `models/phase5/*.joblib` (git-ignored), notebook 05. **Final: GB + clim feature** (target chosen by CV, D-024) → test RMSE 0.579 °C, skill 0.636; GB anomaly-only 0.634 |
 | 6 Evaluation + ARGO | ⏳ | per depth, region, season, cyclone; ARGO matchups |
 | 7 Indicators + report | ⏳ | D20, D26, TCHP, MLD; final report and slides |
 
@@ -99,3 +99,36 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
   - PowerShell needs `& "path\to\exe"` to run a quoted path.
   - argopy 1.4 needs `erddapy<2.3`.
   - NASA CMR times out from Python requests, so use curl.
+
+## Phase 5 headline numbers (test months, 200k rows, absolute temperature)
+
+| Model | RMSE °C | Skill |
+|---|---|---|
+| Gradient Boosting (selected) | 0.634 | 0.593 |
+| Random Forest | 0.639 | 0.585 |
+| Bagging | 0.651 | 0.571 |
+| PCA regression | 0.653 | 0.556 |
+| SVR | 0.702 | 0.481 |
+| KNN | 0.721 | 0.440 |
+| Linear / Ridge / Lasso | 0.738 | 0.452 |
+| GD from scratch | 0.743 | 0.444 |
+| Decision Tree | 0.743 | 0.447 |
+| SST-only | 0.862 | 0.306 |
+| Climatology | 0.999 | 0 |
+
+- **GB per depth:** RMSE 0.38 at 0 m, 1.12 at 100 m, 0.17 at 1000 m.
+- **Ensemble GB+RF:** 0.629, not adopted (CV gain 0.004% < 1%).
+- **Next (Phase 6):**
+  - Full-grid test predictions with the saved GB model (`models/phase5/gradient_boosting.joblib`)
+  - Maps
+  - ARGO collocation (convert in-situ T to θ with gsw; same UTC day, nearest cell)
+  - Cyclone windows (IBTrACS)
+
+- **Target revision (D-024):** a test ablation hinted at a better target, so the choice was re-made by CV.
+  - CV RMSE: anomaly 0.5772, absolute 0.5562, **anomaly + clim feature 0.5385**.
+  - Final model `models/phase5/final_model.joblib` (DepthwiseWithClim; features = 40 base + 15 clim columns).
+  - Test RMSE 0.579, skill 0.636, 0.98 °C at 100 m.
+- **Ablation:**
+  - lat/lon matter most at depth (removing them gives 0.688).
+  - Wind forcing, gradients and the embedding add nothing for boosting (they help linear models).
+  - The learning curve saturates by 400k rows.

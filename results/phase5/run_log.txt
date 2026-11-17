@@ -1,0 +1,31 @@
+[phase5] loading train/test ...
+[phase5] cross-validation (GroupKFold by month) ...
+  CV climatology          best {}  rmse=0.8209 ± 0.0391
+  CV sst_only_linear      best {}  rmse=0.7008 ± 0.0447
+  CV linear_regression    best {}  rmse=0.6269 ± 0.0218
+  CV linear_gd_scratch    best {'lr': 0.01}  rmse=0.6293 ± 0.0251
+  CV ridge                best {'alpha': 10.0}  rmse=0.6268 ± 0.0218
+  CV lasso                best {'alpha': 0.0005}  rmse=0.6268 ± 0.0218
+  CV knn                  best {'k': 40}  rmse=0.6534 ± 0.0308
+  CV svr_rbf              best {'C': 1.0}  rmse=0.6185 ± 0.0332
+  CV decision_tree        best {'max_depth': 8}  rmse=0.6564 ± 0.0201
+  CV bagging_trees        best {'max_depth': 20}  rmse=0.5978 ± 0.0240
+  CV random_forest        best {'max_features': 0.66}  rmse=0.5873 ± 0.0205
+  CV gradient_boosting    best {'lr': 0.05, 'leaves': 63}  rmse=0.5772 ± 0.0211
+  CV pca_regression       best {'K': 8}  rmse=0.5944 ± 0.0203
+  CV ensemble ['gradient_boosting', 'random_forest']: 0.5771 vs best single 0.5772 -> KEEP
+  TEST climatology          RMSE=0.999  skill=0.000  RMSE@100m=1.762  fit 0s
+  TEST sst_only_linear      RMSE=0.862  skill=0.306  RMSE@100m=1.593  fit 1s
+  TEST linear_regression    RMSE=0.738  skill=0.452  RMSE@100m=1.314  fit 22s
+  TEST linear_gd_scratch    RMSE=0.743  skill=0.444  RMSE@100m=1.319  fit 45s
+  TEST ridge                RMSE=0.738  skill=0.452  RMSE@100m=1.314  fit 20s
+  TEST lasso                RMSE=0.739  skill=0.452  RMSE@100m=1.315  fit 235s
+  TEST knn                  RMSE=0.721  skill=0.440  RMSE@100m=1.241  fit 1s
+  TEST svr_rbf              RMSE=0.702  skill=0.481  RMSE@100m=1.241  fit 70s
+  TEST decision_tree        RMSE=0.743  skill=0.447  RMSE@100m=1.304  fit 226s
+  TEST bagging_trees        RMSE=0.651  skill=0.571  RMSE@100m=1.129  fit 346s
+  TEST random_forest        RMSE=0.639  skill=0.585  RMSE@100m=1.114  fit 388s
+  TEST gradient_boosting    RMSE=0.634  skill=0.593  RMSE@100m=1.117  fit 102s
+  TEST pca_regression       RMSE=0.653  skill=0.556  RMSE@100m=1.122  fit 27s
+  TEST ensemble_avg       RMSE=0.629  skill=0.598
+[phase5] model selected by CV: ensemble_avg

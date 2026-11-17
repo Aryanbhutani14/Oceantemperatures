@@ -149,6 +149,52 @@ nan[nan.max(axis=1) > 0].sort_values("train", ascending=False)"""),
 plt.bar(range(1, 9), e["explained_variance_ratio"]); plt.plot(range(1, 9), np.cumsum(e["explained_variance_ratio"]), "ko-")
 plt.title("explained variance of 3×3×7 surface patches"); plt.xlabel("component"); plt.show()"""),
 ],
+"05_models.ipynb": [
+("md", """# 05 · Models: training, cross-validation, test evaluation (Phase 5)
+All syllabus models predict the **temperature anomaly** (truth − external climatology) at 15 depths; prediction = climatology + anomaly.
+
+* **Model selection:** GroupKFold(4) on train months, **groups = month** (whole months held out, never random rows)
+* **Test:** the 4 held-out months (Feb, May, Aug, Nov), **identical 200k rows for every model**
+* Code: `src/oceanembed_ml/models/` · results: `results/phase5/*.json` (written by `scripts/05_models.py`)"""),
+("code", SETUP),
+("md", "## 1. Cross-validation (train months only) → chosen hyper-parameters"),
+("code", """cv = json.loads((ROOT/"results"/"phase5"/"cv_selection.json").read_text())
+pd.DataFrame([{"model": m, "topic": v.get("topic"), "best_params": v.get("best_params", v.get("members")),
+               "cv_rmse": v.get("best_cv_rmse"), "fold_std": v.get("best_cv_fold_std")} for m, v in cv.items()]).sort_values("cv_rmse")"""),
+("md", "## 2. Test months: all models on the same 200k rows"),
+("code", """T = json.loads((ROOT/"results"/"phase5"/"test_metrics.json").read_text())
+print("evaluation subset:", T["eval_subset"], "| selected by CV:", T["selected_by_cv"])
+tab = pd.DataFrame({m: {"topic": v["topic"], "RMSE": v["overall"]["rmse"], "MAE": v["overall"]["mae"], "bias": v["overall"]["bias"],
+                        "R2": v["overall"]["r2"], "r": v["overall"]["pearson_r"], "mean skill vs clim": v["mean_skill_over_depths"],
+                        "RMSE@100m": v["per_depth"]["100"]["rmse"], "fit s": v["fit_seconds"], "predict s (200k)": v["predict_seconds_200k"],
+                        "train rows": v.get("n_train_rows")} for m, v in T["models"].items()}).T
+tab.sort_values("RMSE")"""),
+("code", """for f in ["01_rmse_skill_by_depth.png","02_overall_comparison.png","03_rmse_heatmap.png","04_cv_vs_test.png"]:
+    display(Image(filename=str(FIGURES/"phase5"/f)))"""),
+("md", "## 3. Best model: regions, seasons, example profiles"),
+("code", """for f in ["05_best_model_region_season.png","06_example_profiles.png"]:
+    display(Image(filename=str(FIGURES/"phase5"/f)))"""),
+("md", "## 4. Linear models: gradient descent from scratch, Ridge, Lasso feature selection"),
+("code", """display(Image(filename=str(FIGURES/"phase5"/"07_gradient_descent.png")))
+display(Image(filename=str(FIGURES/"phase5"/"08_lasso_coefficients.png")))"""),
+("md", "## 5. Ablations: feature groups, anomaly vs absolute target, learning curve, group importance"),
+("code", """ab = json.loads((ROOT/"results"/"phase5"/"ablation.json").read_text())
+display(pd.DataFrame({k: {"RMSE": v["overall_rmse"], "skill": v["mean_skill"], "n_features": v["n_features"]} for k, v in ab["features"].items()}).T.round(4))
+display(pd.DataFrame({k: {"RMSE": v["overall_rmse"], "skill": v["mean_skill"]} for k, v in {**ab["target"], **{f"{n} rows": v for n, v in ab["data_size"].items()}}.items()}).T.round(4))
+for f in ["09_ablation.png","10_group_permutation_importance.png"]:
+    display(Image(filename=str(FIGURES/"phase5"/f)))"""),
+("md", """## 6. Target formulation decided by cross-validation, and the final model
+The test-set ablation hinted that the anomaly target was not optimal, but **test results may not drive choices**, so the
+three formulations were compared again with GroupKFold-by-month CV on the train months (`results/phase5/target_cv.json`)."""),
+("code", """tcv = json.loads((ROOT/"results"/"phase5"/"target_cv.json").read_text())
+display(pd.DataFrame({k: {"CV RMSE (abs T)": v["cv_rmse_mean"], "fold std": v["fold_std"], **{f"{d} m": x for d, x in v["per_depth"].items()}}
+                      for k, v in tcv["variants"].items()}).T.round(4))
+print("selected by CV:", tcv["selected_target"])
+fm = json.loads((ROOT/"results"/"phase5"/"final_model.json").read_text())
+print(f"FINAL MODEL ({fm['model']}, target={fm['target']}): test RMSE {fm['overall']['rmse']:.3f} °C | MAE {fm['overall']['mae']:.3f} | "
+      f"bias {fm['overall']['bias']:.3f} | mean skill {fm['mean_skill_over_depths']:.3f}")
+pd.DataFrame(fm["per_depth"]).T[["rmse","mae","bias","r2","pearson_r","skill_vs_clim","n"]].round(3)"""),
+],
 }
 
 
