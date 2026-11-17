@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Subsurface Ocean Temperature · North Indian Ocean</title>
+<meta name="description" content="Machine learning reconstruction of North Indian Ocean temperature from 0 to 1000 m using satellite surface data only.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;1,8..60,300;1,8..60,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=3">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230B141C'/%3E%3Cpath d='M5 12c4-3 7 3 11 0s7 3 11 0M5 18c4-3 7 3 11 0s7 3 11 0' stroke='%23C9A86A' stroke-width='2' fill='none'/%3E%3C/svg%3E">
+</head>
+<body>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#top"><span class="brand-name">Subsurface</span><span class="brand-tag">North Indian Ocean · ML</span></a>
+  <nav class="links">
+    <a href="#gap">The gap</a><a href="#method">Method</a><a href="#explorer">Explorer</a><a href="#depth">Depth</a>
+    <a href="#argo">ARGO</a><a href="#cyclones">Cyclones</a><a href="#models">Models</a><a href="#classifier">Classifier</a>
+  </nav>
+  <a class="nav-cta" href="#explorer">Open the explorer</a>
+</header>
+
+<!-- ============================================================ HERO -->
+<section class="hero" id="top">
+  <div class="hero-sticky">
+    <canvas id="snow"></canvas>
+    <div class="hero-meta mono">
+      <div>NORTH INDIAN OCEAN · 5°N–30°N · 45°E–105°E</div>
+      <div>2021 · 0.25° DAILY · 15 DEPTHS · 0–1000 M</div>
+    </div>
+    <div class="hero-copy">
+      <h1>Seeing <em class="gold">beneath</em><br>the surface.</h1>
+      <p>Machine learning that reconstructs ocean temperature from the surface down to 1000&nbsp;m, using nothing but what satellites can see. Trained on ocean reanalysis, checked against real ARGO floats.</p>
+    </div>
+    <div class="gauge mono" aria-hidden="true">
+      <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
+      <div class="gauge-ticks" id="gaugeTicks"></div>
+      <div class="gauge-read"><span id="gDepth">0 m</span><span id="gTemp">28.4 °C</span><span class="dim">domain mean</span></div>
+    </div>
+    <div class="scroll-hint mono">Scroll to descend</div>
+  </div>
+</section>
+
+<!-- ============================================================ 01 GAP -->
+<section class="sec cream" id="gap">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">01</span><h2>Satellites see the surface. <em>The ocean lives below it.</em></h2></div>
+    <div class="grid-2">
+      <div class="lede">
+        <p>Cyclones, the monsoon and fisheries all depend on how much heat sits in the upper few hundred metres of the North Indian Ocean, especially in the <em>thermocline</em> between 50 and 200 m, where temperature drops fastest.</p>
+        <p>Satellites measure temperature, salinity, sea level and winds at the surface every day, everywhere. Below the surface we only have ARGO floats: accurate, but a few thousand profiles a year for an entire basin.</p>
+        <p>We ask a simple question: <strong>how much of the subsurface can be recovered from the surface alone?</strong></p>
+      </div>
+      <div class="side-notes">
+        <div class="note"><h4>The gap</h4><p>Only 4,071 ARGO profiles fell in our region in 2021, against 4.3 million ocean cell-days on a 0.25° grid.</p></div>
+        <div class="note"><h4>What the surface knows</h4><p>Warm water expands, so a thick warm layer lifts sea level by a few centimetres. Winds drive mixing and upwelling. These signals carry information about the column below.</p></div>
+        <div class="note"><h4>Our approach</h4><p>Course machine learning models, one per depth, trained on GLORYS reanalysis with a strict month-based split, and judged against climatology and independent ARGO floats.</p></div>
+      </div>
+    </div>
+    <div class="stats" id="heroStats"></div>
+  </div>
+</section>
+
+<!-- ============================================================ 02 METHOD -->
+<section class="sec cream alt" id="method">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">02</span><h2>From satellite pixels <em>to a full column.</em></h2></div>
+    <p class="sub">Train on reanalysis. Predict from satellites only. Validate on floats the model never saw.</p>
+    <ol class="steps">
+      <li><span class="dot mono">01</span><h4>Acquire</h4><p>Eight datasets for 2021: SST, salinity, sea level, currents, winds, reanalysis, climatology, ARGO and cyclone tracks.</p><span class="tag mono">CMEMS · ARGO GDAC · IBTrACS</span></li>
+      <li><span class="dot mono">02</span><h4>Harmonise</h4><p>One area-weighted regridder puts every source on the same 0.25° daily grid; 15 standard depths; ocean mask of 11,880 cells.</p><span class="tag mono">xarray · numpy</span></li>
+      <li><span class="dot mono">03</span><h4>Explore</h4><p>Sea level tracks 100 m temperature (ρ 0.71); extreme SST values are real cyclone cold wakes, so they are kept.</p><span class="tag mono">EDA · PCA</span></li>
+      <li><span class="dot mono">04</span><h4>Engineer</h4><p>40 features: wind stress, Ekman pumping, gradients, 7-day memory, location, season and a PCA summary of the local surface pattern.</p><span class="tag mono">40 features</span></li>
+      <li><span class="dot mono">05</span><h4>Model</h4><p>13 regression models compared on identical test rows; chosen only by cross-validation that holds out whole months.</p><span class="tag mono">scikit-learn</span></li>
+      <li><span class="dot mono">06</span><h4>Validate</h4><p>Four unseen test months, independent ARGO floats, and indicators forecasters use: D20, TCHP, mixed layer depth.</p><span class="tag mono">ARGO · TEOS-10</span></li>
+    </ol>
+    <p class="aside">Test months February, May, August and November (one per season), with seven-day gaps around each so that neighbouring days never sit on both sides of the split.</p>
+    <div class="table-wrap">
+      <table class="data">
+        <thead><tr><th>Variable</th><th>Source</th><th>Native</th><th>Harmonised</th><th>Role</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>Sea surface temperature</td><td>OSTIA L4</td><td>0.05° daily</td><td>0.25° daily</td><td>Input</td><td>Kelvin → °C, area-weighted</td></tr>
+          <tr><td>Sea surface salinity</td><td>Multi-observation SSS</td><td>0.125° daily</td><td>0.25° daily</td><td>Input</td><td>Fresh Bay of Bengal vs salty Arabian Sea</td></tr>
+          <tr><td>Sea level anomaly</td><td>DUACS altimetry</td><td>0.125° daily</td><td>0.25° daily</td><td>Input</td><td>Strongest thermocline signal</td></tr>
+          <tr><td>Surface currents u, v</td><td>DUACS geostrophic</td><td>0.125° daily</td><td>0.25° daily</td><td>Input</td><td>From sea-level slopes</td></tr>
+          <tr><td>Winds u, v</td><td>CMEMS L4 scatterometer</td><td>0.125° hourly</td><td>0.25° daily mean</td><td>Input</td><td>Wind stress, Ekman pumping</td></tr>
+          <tr><td>Temperature θ(z)</td><td>GLORYS reanalysis</td><td>0.25° daily</td><td>0.25°, 15 depths</td><td>Target</td><td>Exact grid match, no regridding</td></tr>
+          <tr><td>Climatology θ(z)</td><td>GLORYS12 monthly</td><td>1/12° monthly</td><td>0.25°, 15 depths</td><td>Baseline</td><td>Multi-decade, external to 2021</td></tr>
+          <tr><td>ARGO T(z)</td><td>ARGO GDAC</td><td>Irregular profiles</td><td>Matched cell-days</td><td>Validate</td><td>Never used in training</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 03 EXPLORER -->
+<section class="sec navy" id="explorer">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">03</span><h2>A working column <em class="gold">over the basin.</em></h2></div>
+    <p class="sub">The final model on unseen test days, on the same 0.25° grid it was trained on. Pick a day and a depth, compare with GLORYS and climatology, and click any ocean cell to read its full column.</p>
+
+    <div class="controls">
+      <div class="ctl-row">
+        <span class="ctl-label mono">Field</span>
+        <div class="chips" id="layerChips"></div>
+        <span class="spacer"></span>
+        <label class="mono select-wrap">Day
+          <select id="daySel"></select>
+        </label>
+      </div>
+      <div class="ctl-row">
+        <span class="ctl-label mono">Source</span>
+        <div class="chips" id="srcChips"></div>
+        <span class="spacer"></span>
+        <label class="toggle mono"><input type="checkbox" id="argoTog" checked> ARGO floats</label>
+        <label class="toggle mono"><input type="checkbox" id="trackTog" checked> Cyclone tracks</label>
+      </div>
+      <div class="ctl-row" id="depthRow">
+        <span class="ctl-label mono">Depth</span>
+        <div class="depth-chips" id="depthChips"></div>
+      </div>
+    </div>
+
+    <div class="map-card">
+      <div class="map-head">
+        <div><div class="map-title" id="mapTitle">Temperature · 100 m</div><div class="map-subtitle mono" id="mapSub"></div></div>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="map-box" id="mapBox">
+        <canvas id="map"></canvas>
+        <div class="tip mono" id="tip"></div>
+        <div class="loading mono" id="mapLoading">Loading day…</div>
+      </div>
+      <div class="map-foot mono"><span><i class="sw-cell"></i> 0.25° grid cell</span><span><i class="sw-argo"></i> ARGO profile on this day</span><span><i class="sw-track"></i> cyclone track</span><span class="dim">Click the ocean to pin a cell.</span></div>
+    </div>
+
+    <div class="pinned">
+      <div class="pin-head"><span class="mono dim">PINNED COLUMN · <span id="pinDay"></span></span><div class="pin-coord" id="pinCoord">—</div></div>
+      <div class="pin-grid">
+        <div class="readouts" id="readouts"></div>
+        <div class="chart-card">
+          <div class="chart-title">Temperature profile</div>
+          <div class="chart-sub mono" id="profSub"></div>
+          <div id="profChart" class="chart"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 04 DEPTH -->
+<section class="sec cream" id="depth">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">04</span><h2>The thermocline is <em>where error hides.</em></h2></div>
+    <p class="sub">Error on the four unseen test months. Every model shares the same shape: small at the surface, a peak near 100 m where the thermocline moves up and down, and small again at depth.</p>
+    <div class="grid-2 charts">
+      <div class="chart-card light">
+        <div class="chart-title">RMSE by depth</div>
+        <div class="chart-sub mono">°C · final model vs climatology baseline</div>
+        <div id="depthChart" class="chart"></div>
+      </div>
+      <div class="chart-card light">
+        <div class="chart-title">Share of predictions within ±1 °C</div>
+        <div class="chart-sub mono">% of test cell-days · final model vs climatology</div>
+        <div id="tolChart" class="chart"></div>
+      </div>
+    </div>
+    <div class="stats" id="depthStats"></div>
+    <h3 class="h3">By region and season</h3>
+    <div class="cards4" id="breakCards"></div>
+  </div>
+</section>
+
+<!-- ============================================================ 05 ARGO -->
+<section class="sec cream alt" id="argo">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">05</span><h2>Checked against <em>real floats.</em></h2></div>
+    <p class="sub">ARGO floats were never used for training or tuning. Every profile that fell on a test day was quality-checked, converted to potential temperature (TEOS-10) and matched to its grid cell.</p>
+    <div class="stats" id="argoStats"></div>
+    <div class="grid-2 charts">
+      <div class="chart-card light">
+        <div class="chart-title">ML prediction vs ARGO</div>
+        <div class="chart-sub mono" id="argoScatSub"></div>
+        <div id="argoScatter" class="chart"></div>
+      </div>
+      <div class="chart-card light">
+        <div class="chart-title">RMSE against ARGO by depth</div>
+        <div class="chart-sub mono">°C · GLORYS assimilates ARGO, so it is the ceiling, not a competitor</div>
+        <div id="argoDepth" class="chart"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 06 CYCLONES -->
+<section class="sec cream" id="cyclones">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">06</span><h2>The heat that <em>feeds cyclones.</em></h2></div>
+    <p class="sub">Tropical Cyclone Heat Potential (TCHP) is the heat stored in water warmer than 26 °C. Above about 60 kJ/cm² the ocean can support rapid intensification. Two May 2021 storms, on unseen test days.</p>
+    <div class="chips light" id="cycChips"></div>
+    <div class="cyc-head" id="cycHead"></div>
+    <div class="triptych" id="triptych"></div>
+    <div class="grid-2 charts">
+      <div class="chart-card light">
+        <div class="chart-title">Daily error across the test months</div>
+        <div class="chart-sub mono">domain RMSE °C · <span class="chips mini" id="dailyChips"></span></div>
+        <div id="dailyChart" class="chart"></div>
+      </div>
+      <div class="chart-card light">
+        <div class="chart-title">Ocean indicators</div>
+        <div class="chart-sub mono">RMSE against GLORYS, all test cell-days</div>
+        <div id="indTable"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 07 MODELS -->
+<section class="sec navy" id="models">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">07</span><h2>Every model, <em class="gold">the same test.</em></h2></div>
+    <p class="sub">Thirteen regression models from linear regression to boosting, plus two baselines. All tuned by GroupKFold cross-validation that holds out whole months, and all scored on the same 200,000 test rows.</p>
+    <div class="chips" id="modelChips"></div>
+    <div class="model-card" id="modelCard"></div>
+    <div class="table-wrap dark"><table class="data dark" id="modelTable"></table></div>
+  </div>
+</section>
+
+<!-- ============================================================ 08 CLASSIFIER -->
+<section class="sec cream" id="classifier">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">08</span><h2>Will the ocean <em>feed a storm?</em></h2></div>
+    <p class="sub">A yes/no version of the problem: is TCHP at least 60 kJ/cm²? Seven classifiers were tuned by cross-validated ROC-AUC; logistic regression with an L1 penalty was selected. Move the threshold and watch the trade-off.</p>
+    <div class="clf">
+      <div class="clf-left">
+        <div class="chips light" id="clfChips"></div>
+        <div class="slider-row"><span class="mono">Decision threshold</span><input type="range" id="thr" min="1" max="99" value="50"><span class="mono strong" id="thrVal">0.50</span></div>
+        <div class="cm" id="cm"></div>
+        <div class="clf-metrics" id="clfMetrics"></div>
+        <p class="aside" id="clfNote"></p>
+      </div>
+      <div class="chart-card light">
+        <div class="chart-title">ROC curve</div>
+        <div class="chart-sub mono">100,000 test rows · dot = current threshold · square = climatology rule</div>
+        <div id="rocChart" class="chart"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ 09 IMPACT -->
+<section class="sec cream alt" id="impact">
+  <div class="wrap">
+    <div class="sec-head"><span class="num mono">09</span><h2>Why it <em>matters.</em></h2></div>
+    <p class="sub">A fast, cheap estimate of the ocean column from data that arrives every day.</p>
+    <div class="impact">
+      <div><span class="mono gold-d">01</span><h4>Cyclone preparedness</h4><p>Daily TCHP and D26 maps from satellites, without waiting for the next float to surface.</p></div>
+      <div><span class="mono gold-d">02</span><h4>Fisheries</h4><p>A shallow thermocline marks upwelling of cold, nutrient-rich water, where fish gather.</p></div>
+      <div><span class="mono gold-d">03</span><h4>Monsoon and climate</h4><p>Upper-ocean heat content links to monsoon behaviour over the subcontinent.</p></div>
+      <div><span class="mono gold-d">04</span><h4>Maritime operations</h4><p>Sound travels differently through layers of different temperature, which matters for acoustics and navigation.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ FOOTER -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="mono dim small">DATA THE MODEL ACTUALLY USES</div>
+    <div class="src-grid">
+      <div><h5>Sea surface temperature</h5><span class="mono">OSTIA L4 · 0.05° daily · input</span></div>
+      <div><h5>Sea surface salinity</h5><span class="mono">Multi-obs SSS · daily · input</span></div>
+      <div><h5>Sea level anomaly + currents</h5><span class="mono">DUACS altimetry · daily · input</span></div>
+      <div><h5>Surface winds</h5><span class="mono">CMEMS L4 scatterometer · hourly · input</span></div>
+      <div><h5>GLORYS reanalysis</h5><span class="mono">Copernicus Marine · 0.25° · target</span></div>
+      <div><h5>GLORYS12 climatology</h5><span class="mono">monthly · baseline</span></div>
+      <div><h5>ARGO profiles</h5><span class="mono">ARGO GDAC · validation only</span></div>
+      <div><h5>Cyclone tracks</h5><span class="mono">IBTrACS · context</span></div>
+    </div>
+    <div class="foot-bottom">
+      <div>
+        <div class="foot-title">Subsurface Ocean Temperature Reconstruction</div>
+        <div class="dim">Tanmay Sangwan · Tanmay Kandwal · Aryan Bhutani · Prashast</div>
+        <div class="dim">Department of Computer Science and Engineering · BML Munjal University</div>
+        <div class="dim">Aligned with a problem statement of INCOIS, Ministry of Earth Sciences</div>
+      </div>
+      <div class="mono dim small right">NORTH INDIAN OCEAN<br>0–1000 M · 15 DEPTHS · 0.25° DAILY · 2021</div>
+    </div>
+  </div>
+</footer>
+
+<script src="app.js?v=3"></script>
+</body>
+</html>

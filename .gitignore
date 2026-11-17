@@ -44,3 +44,8 @@ reports/*.pdf
 # Local-only deliverables: code ZIP and viva guide
 submission/
 reports/viva/
+
+# Local tool config and Office lock files
+.claude/
+~$*
+~WRL*.tmp
