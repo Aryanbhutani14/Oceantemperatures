@@ -104,9 +104,9 @@ def best_model_breakdown(T):
     full = np.isfinite(Y).all(1)
     for a, r in zip(ax, ["arabian_sea", "arabian_sea", "bay_of_bengal", "bay_of_bengal"]):
         i = rng.choice(np.where(full & (z["region"] == r))[0])
-        a.plot(Y[i], DZ, "k-o", ms=3, label="GLORYS (truth)")
+        a.plot(Y[i], DZ, "k-o", ms=3, label="Real (GLORYS)")
         a.plot(C[i], DZ, "--", c="gray", label="climatology")
-        a.plot(C[i] + P[i], DZ, "r-s", ms=3, label=f"{best}")
+        a.plot(C[i] + P[i], DZ, "r-s", ms=3, label="ML prediction")
         a.set_title(f"{r}\n{z['lat'][i]:.2f}N {z['lon'][i]:.2f}E, month {z['month'][i]}", fontsize=9); a.grid(alpha=0.3)
         a.set_xlabel("°C")
     ax[0].invert_yaxis(); ax[0].set_ylabel("depth (m)"); ax[0].legend(fontsize=8)

@@ -1,4 +1,4 @@
-// Builds reports/OceanEmbed_ML_Project_Report.docx following the BMU CSE2032 report template.
+// Builds reports/OceanEmbed_ML_Project_Report.docx following the BMU report template.
 // All numbers come from the results JSON written by the pipeline.
 // Run:  cd reports/build && node build_report.js
 const fs = require("fs");
@@ -11,7 +11,7 @@ const {
 const ROOT = path.resolve(__dirname, "..", "..");
 const J = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8").replace(/\bNaN\b/g, "null"));
 const IMG = (p) => path.join(__dirname, "img", p.replace("/", "_"));
-const OUT = path.join(ROOT, "reports", "OceanEmbed_ML_Project_Report.docx");
+const OUT = path.join(ROOT, "reports", process.env.REPORT_NAME || "OceanEmbed_ML_Project_Report.docx");
 
 const T5 = J("results/phase5/test_metrics.json"), CV5 = J("results/phase5/cv_selection.json"), FM = J("results/phase5/final_model.json");
 const TCV = J("results/phase5/target_cv.json"), AB = J("results/phase5/ablation.json"), FT = J("results/phase6/full_test_metrics.json");
@@ -85,7 +85,7 @@ const body = [];
 // Cover page (template page 1)
 body.push(
   new Paragraph({ spacing: { before: 1200 } }),
-  center("Project Report", 28, { bold: true }), center("Machine Learning", 32, { bold: true }), center("CSE2032", 28, { bold: true, after: 600 }),
+  center("Project Report", 28, { bold: true }), center("Machine Learning", 32, { bold: true, after: 600 }),
   center(TITLE, 30, { bold: true, after: 500 }),
   center("By", 26, { bold: true, italics: true, after: 300 }),
   ...[["Tanmay Sangwan", "240669"], ["Tanmay Kandwal", "240670"], ["Aryan Bhutani", "240406"], ["Prashast", "240586"]]
@@ -119,8 +119,8 @@ body.push(
 // ---------------- 1. Introduction
 body.push(H1("1. Introduction"),
   P("Satellites measure the ocean surface every day: its temperature, salinity, height and the winds and currents acting on it. What happens below the surface, however, is just as important. The depth and warmth of the upper-ocean layer control how much heat is available to tropical cyclones, how the Indian monsoon develops, where fish aggregate and how the ocean stores heat in a warming climate. Direct subsurface measurements are sparse: in 2021 there were only about 4,000 ARGO float profiles in the whole North Indian Ocean, against millions of satellite pixels."),
-  P("In this CSE2032 course project we reconstruct the vertical temperature structure of the North Indian Ocean (5–30°N, 45–105°E) at 15 standard depths from 0 to 1000 m, daily on a 0.25° grid, using only surface satellite observations. The problem is aligned with a problem statement published by the Indian National Centre for Ocean Information Services (INCOIS), Ministry of Earth Sciences. We apply the methods of the course (regression, regularization, classification, ensembles, PCA, cross-validation and model evaluation) to this real geoscience problem, with particular attention to realistic, leakage-free evaluation."),
-  P(["Our contributions are: (i) a reproducible pipeline that harmonises eight datasets onto one common grid; (ii) exploratory analysis and 40 physically motivated features; (iii) a fair, leakage-free comparison of 13 regression models and 7 classifiers from the course syllabus, including a linear regression trained by gradient descent implemented from scratch; (iv) a final model reaching a test RMSE of ", { text: `${f2(FT.overall.rmse)} °C`, bold: true }, ` (${redPct}% below the climatology baseline) and `, { text: `${f2(AR.overall.pred.rmse)} °C against independent ARGO floats`, bold: true }, "; and (v) a cyclone-favourability classifier and oceanographic indicators relevant to disaster management."]),
+  P("In this project we reconstruct the vertical temperature structure of the North Indian Ocean (5–30°N, 45–105°E) at 15 standard depths from 0 to 1000 m, daily on a 0.25° grid, using only surface satellite observations. The problem is aligned with a problem statement published by the Indian National Centre for Ocean Information Services (INCOIS), Ministry of Earth Sciences. We treat it as a supervised machine-learning problem and solve it with regression, regularization, classification, ensemble methods and principal component analysis, with particular attention to realistic, leakage-free evaluation."),
+  P(["Our contributions are: (i) a reproducible pipeline that harmonises eight datasets onto one common grid; (ii) exploratory analysis and 40 physically motivated features; (iii) a fair, leakage-free comparison of 13 regression models and 7 classifiers, including a linear regression trained by gradient descent implemented from scratch; (iv) a final model reaching a test RMSE of ", { text: `${f2(FT.overall.rmse)} °C`, bold: true }, ` (${redPct}% below the climatology baseline) and `, { text: `${f2(AR.overall.pred.rmse)} °C against independent ARGO floats`, bold: true }, "; and (v) a cyclone-favourability classifier and oceanographic indicators relevant to disaster management."]),
 );
 
 // ---------------- 2. Problem statement
@@ -138,10 +138,10 @@ body.push(H1("2. Problem Statement"),
   tcap("Problem specification used in this project."),
   H2("2.2 Our formulation"),
   B([{ text: "Regression (main task): ", bold: true }, "for every ocean grid cell and day, predict the temperature at the 15 depths from the surface features of that cell and its neighbourhood."]),
-  B([{ text: "Classification (added for the course): ", bold: true }, "predict whether the ocean is favourable for cyclone intensification, defined as Tropical Cyclone Heat Potential TCHP ≥ 60 kJ cm⁻² (Leipper & Volgenau 1972). This turns the reconstruction into an actionable yes/no decision."]),
+  B([{ text: "Classification (secondary task): ", bold: true }, "predict whether the ocean is favourable for cyclone intensification, defined as Tropical Cyclone Heat Potential TCHP ≥ 60 kJ cm⁻² (Leipper & Volgenau 1972). This turns the reconstruction into an actionable yes/no decision."]),
   H2("2.3 Scope and constraints"),
-  B("Models and evaluation methods are taken from the CSE2032 syllabus (Section 5.12 maps every method to a syllabus topic)."),
-  B("One year of data (2021) because of the submission deadline. 2021 contains five cyclones (Tauktae, Yaas, Gulab, Shaheen, Jawad) and 4,071 ARGO profiles in the region."),
+  B("Supervised learning methods: linear and regularized regression, instance-based and kernel methods, decision trees, ensembles and PCA, all tuned with cross-validation."),
+  B("One year of data (2021), which keeps the data volume manageable (about 6.8 GB). 2021 contains five cyclones (Tauktae, Yaas, Gulab, Shaheen, Jawad) and 4,071 ARGO profiles in the region."),
   B("No data leakage: whole months are held out for testing (never random rows), and every modelling decision is made by cross-validation on training months only."),
 );
 
@@ -192,7 +192,7 @@ body.push(H1("4. Literature Review"),
     ["Qi et al. (2022), Remote Sensing", "Satellite surface data; ARGO", "Stacking ensemble of XGBoost, random forest and LightGBM", "South China Sea", "Ensembles of tree models improve accuracy: supports our ensemble comparison"],
   ], [1.55, 1.45, 1.35, 1.2, 2.45]),
   tcap("Related work using the same kind of data."),
-  P("Four lessons shaped our design. First, sea level is the most informative input for the thermocline, because a deeper warm layer raises the sea surface (Rebert et al. 1985). Second, salinity matters in the Indian Ocean, where river runoff and evaporation create strong contrasts (Su et al. 2015). Third, regression, support vector machines and tree ensembles are established, competitive approaches, and boosting and stacking of trees tend to give the best accuracy (Su et al. 2018, 2019; Qi et al. 2022). Fourth, the heat content above the 26 °C isotherm is a validated, decision-relevant quantity for cyclones in this very region (Shay et al. 2000; Nagamani et al. 2012). Our project brings these ideas together in one leakage-free comparison of course-syllabus models for the North Indian Ocean, and adds an independent ARGO validation and a cyclone-favourability classifier."),
+  P("Four lessons shaped our design. First, sea level is the most informative input for the thermocline, because a deeper warm layer raises the sea surface (Rebert et al. 1985). Second, salinity matters in the Indian Ocean, where river runoff and evaporation create strong contrasts (Su et al. 2015). Third, regression, support vector machines and tree ensembles are established, competitive approaches, and boosting and stacking of trees tend to give the best accuracy (Su et al. 2018, 2019; Qi et al. 2022). Fourth, the heat content above the 26 °C isotherm is a validated, decision-relevant quantity for cyclones in this very region (Shay et al. 2000; Nagamani et al. 2012). Our project brings these ideas together in one leakage-free comparison of machine-learning models for the North Indian Ocean, and adds an independent ARGO validation and a cyclone-favourability classifier."),
 );
 
 // ---------------- 5. Methodology
@@ -261,42 +261,25 @@ body.push(H1("5. Methodology"),
   B([{ text: "Bagging: ", bold: true }, "30 deep trees on bootstrap samples; averaging reduces variance."]),
   B([{ text: "Random Forest: ", bold: true }, "bagging plus random feature subsets, which decorrelates the trees."]),
   B([{ text: "Gradient Boosting: ", bold: true }, "shallow trees fitted sequentially to residuals with a small learning rate (histogram-based implementation)."]),
-  B([{ text: "Averaging ensemble: ", bold: true }, "average of the two best models; adopted only if it improves the cross-validated error by at least 1%, so complexity is never added for presentation."]),
+  B([{ text: "Averaging ensemble: ", bold: true }, "average of the two best models; adopted only if it improves the cross-validated error by at least 1%, so complexity is only added when it clearly helps."]),
   H2("5.9 Hyperparameter tuning and cross-validation"),
   P("Every hyperparameter grid is evaluated with GroupKFold (4 folds) where the groups are calendar months, so each fold holds out two whole training months. Regression models are scored by the mean anomaly RMSE at five representative depths (0, 50, 100, 300, 1000 m); classifiers by ROC-AUC (GridSearchCV). Preprocessing (median imputation, standardisation) is inside each scikit-learn pipeline, so it is refitted on the training folds only. The test months are used once, for final scoring, on identical rows for every model."),
   H2("5.10 Regularization"),
   P("Regularization appears at several levels: L2 and L1 penalties (Ridge, Lasso, logistic regression with C = 1/λ), tree depth and leaf-size limits, and the learning rate and L2 penalty of gradient boosting. Section 7.6 shows validation curves in which overfitting appears and is then controlled."),
   H2("5.11 Evaluation metrics"),
   P("Regression: RMSE, MAE, bias, R², Pearson r and skill versus climatology, per depth and pooled, plus the share of predictions within ±0.5 °C and ±1 °C. Classification: accuracy, precision, recall, F1, ROC-AUC, specificity and confusion matrices. Because R² on absolute temperature is inflated by the large vertical temperature range (even climatology scores 0.98), we use RMSE and skill as the headline metrics. Uncertainty of the headline numbers is estimated with a block bootstrap over test days."),
-  H2("5.12 Alignment with the CSE2032 syllabus"),
-  P("Every modelling and evaluation method maps to a topic of the course handout. The few additions beyond the handout are standard extensions needed to treat this data correctly, and the reason for each is given."),
-  table(["Method used in this project", "CSE2032 handout topic", "Status / reason"], [
-    ["Linear regression; cost function; gradient descent implemented from scratch", "Regression; cost function and gradient descent", "In syllabus"],
-    ["Ridge (L2), Lasso (L1); validation curves; bias–variance", "Regularization; under/overfitting, bias–variance trade-off", "In syllabus"],
-    ["Logistic regression (L1/L2), SVM, decision tree, KNN", "Classification", "In syllabus"],
-    ["Bagging, random forest, gradient boosting, averaging ensemble", "Ensemble: decision forest, bagging, boosting", "In syllabus"],
-    ["PCA regression; PCA summary of surface patterns", "Dimension reduction with PCA", "In syllabus"],
-    ["GroupKFold cross-validation, GridSearchCV, hyperparameter grids", "Cross-validation, hyperparameter tuning", "In syllabus; grouping by month is required because neighbouring days are near-duplicates (random K-fold would leak)"],
-    ["Accuracy, precision, recall, F1, confusion matrix, ROC/AUC, R², bootstrap confidence intervals", "Model validation and selection", "In syllabus"],
-    ["Outlier screening with a robust z-score", "Anomaly detection (density estimation)", "In syllabus: a z-score threshold is a Gaussian density threshold"],
-    ["SVR and KNN regression", "SVM and KNN (taught for classification)", "Extension: the same algorithms applied to a regression target"],
-    ["Regridding, unit conversion, ARGO collocation, oceanographic indicators (D20, TCHP)", "Data import, processing and transformation (course overview)", "Domain-specific data preparation needed to build a valid dataset; not a modelling method"],
-    ["Permutation importance, ablation study", "Model interpretation and selection", "Small extension used only to explain results"],
-  ], [2.6, 2.2, 2.2]),
-  tcap("Methods used and the corresponding CSE2032 syllabus topics."),
 );
 
 // ---------------- 6. Technology stack
 body.push(H1("6. Technology Stack"),
   table(["Layer", "Tools"], [
-    ["Language and packaging", "Python 3.13; installable package src/oceanembed_ml (pyproject.toml); thin command-line scripts per phase"],
+    ["Language", "Python 3.13; Jupyter notebooks for analysis and visualisation"],
     ["Data access", "copernicusmarine toolbox (CMEMS), NASA CMR, Argo GDAC index, requests"],
     ["Scientific data", "xarray, NetCDF4, NumPy, SciPy, pandas, PyArrow / Parquet"],
     ["Oceanography", "gsw (TEOS-10) for ARGO pressure-to-depth and potential temperature"],
     ["Machine learning", "scikit-learn: LinearRegression, Ridge, Lasso, LogisticRegression, SVR/SVC, KNN, DecisionTree, RandomForest, Bagging, HistGradientBoosting, PCA, GroupKFold, GridSearchCV, validation_curve; custom NumPy gradient descent"],
-    ["Visualisation", "matplotlib; executed Jupyter notebooks (nbformat, nbclient)"],
-    ["Quality", "pytest (21 tests), Git/GitHub version control, decision log"],
-    ["Reporting", "Node.js pptxgenjs and docx for the presentation and this report (numbers read from result files)"],
+    ["Visualisation", "matplotlib"],
+    ["Testing and version control", "pytest unit tests, Git and GitHub"],
   ], [1.8, 5.2]),
   tcap("Technology stack."),
 );
@@ -397,8 +380,9 @@ body.push(H1("7. Experimental Results"),
 
 // ---------------- 8. Team matrix
 body.push(H1("8. Team Responsibility/Self-contribution Matrix"),
-  table(["Activity", ...TEAM.members], TEAM.activities.map(([a, lead]) => [a, ...TEAM.members.map((m) => (m === lead ? "Lead" : "Support"))]), [2.6, 1.1, 1.1, 1.1, 1.1]),
-  tcap("Contribution of each team member (each member leads three activities and supports the rest)."),
+  P("All four members contributed equally to every part of the project."),
+  table(["Activity", ...TEAM.members], TEAM.activities.map(([a]) => [a, ...TEAM.members.map(() => "✓")]), [2.6, 1.1, 1.1, 1.1, 1.1]),
+  tcap("Contribution of each team member (equal contribution)."),
 );
 
 // ---------------- 9. Conclusions
@@ -409,7 +393,7 @@ body.push(H1("9. Conclusions"),
   B("Regularization was demonstrated where it matters: an over-complex model overfits severely without it, while Ridge and Lasso restore generalisation and Lasso selects 17 of 861 features."),
   B("A leakage-free design (whole-month test split, cross-validation-only decisions, independent ARGO validation) makes the results defensible."),
   P([{ text: "Limitations: ", bold: true }, "only one year of data; GLORYS, used as truth, assimilates ARGO; predictions are smoother than reality; the model relies on location and is specific to this region."]),
-  P([{ text: "Future work: ", bold: true }, "multi-year training, spatial-holdout tests, uncertainty estimates (for example quantile regression), clustering of ocean regimes (K-Means/DBSCAN) to train regime-specific models, and deployment as a web dashboard."]),
+  P([{ text: "Future work: ", bold: true }, "multi-year training, uncertainty estimates (for example quantile regression), clustering of ocean regimes (K-Means/DBSCAN) to train regime-specific models, and deployment as a web dashboard."]),
 );
 
 // ---------------- References

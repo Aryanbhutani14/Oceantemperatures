@@ -127,17 +127,21 @@ def main() -> int:
     return 0
 
 
+PRETTY = {"climatology_rule": "Climatology rule", "logistic_l2": "Logistic Regression (L2)", "logistic_l1": "Logistic Regression (L1)", "svm_rbf": "SVM (RBF)",
+          "decision_tree": "Decision Tree", "knn": "KNN", "random_forest": "Random Forest", "gradient_boosting": "Gradient Boosting"}
+
+
 def figures(out, y, roc_store, test):
     fig, ax = plt.subplots(figsize=(7, 6.5), constrained_layout=True)
     for n, s in roc_store.items():
         if n == "climatology_rule":
             fpr, tpr, _ = roc_curve(y, s)
-            ax.plot(fpr[1], tpr[1], "ks", ms=8, label="climatology rule (single point)")
+            ax.plot(fpr[1], tpr[1], "ks", ms=8, label="Climatology rule (single point)")
             continue
         fpr, tpr, _ = roc_curve(y, s)
-        ax.plot(fpr, tpr, lw=2.5 if n == out["selected_by_cv"] else 1.2, label=f"{n} (AUC {out['models'][n]['roc_auc']:.3f})")
+        ax.plot(fpr, tpr, lw=2.5 if n == out["selected_by_cv"] else 1.2, label=f"{PRETTY.get(n, n)} (AUC {out['models'][n]['roc_auc']:.3f})")
     ax.plot([0, 1], [0, 1], "k:", lw=0.8); ax.set_xlabel("false positive rate"); ax.set_ylabel("true positive rate (recall)")
-    ax.set_title("ROC curves: TCHP ≥ 60 kJ cm⁻², test months"); ax.legend(fontsize=8)
+    ax.set_title("ROC curves: cyclone-favourable ocean (test months)"); ax.legend(fontsize=8)
     fig.savefig(FIG / "01_roc_curves.png", dpi=110); plt.close(fig)
 
     names = ["climatology_rule", out["selected_by_cv"], "decision_tree", "gradient_boosting"]
