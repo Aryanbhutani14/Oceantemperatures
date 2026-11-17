@@ -1,0 +1,15 @@
+{
+  "days_per_split": {
+    "train": 189,
+    "test": 120,
+    "buffer": 56
+  },
+  "ocean_cells": 11880,
+  "surface_samples_per_split": {
+    "train": 2245320,
+    "test": 1425600,
+    "buffer": 665280
+  },
+  "file": "data\\processed\\cube.nc",
+  "size_MB": 259.4
+}

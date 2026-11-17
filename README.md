@@ -14,8 +14,8 @@ We reconstruct ocean temperature at **15 depths (0–1000 m)** over the **North 
 |---|---|---|
 | 0 | Problem and dataset audit | ✅ Complete |
 | 1 | Data download (6.8 GB, all files verified) | ✅ Complete — [details](docs/phase1_acquisition.md) |
-| **2** | Harmonisation onto one common grid (11,880 ocean cells × 365 days × 15 depths) | ✅ **Complete**, awaiting approval — [details](docs/phase2_harmonisation.md) |
-| 3 | Integration (data cube) + EDA | ⏳ |
+| 2 | Harmonisation onto one common grid (11,880 ocean cells × 365 days × 15 depths) | ✅ Complete — [details](docs/phase2_harmonisation.md) |
+| **3** | Integration (data cube) + EDA + outlier/cyclone check | ✅ **Complete**, awaiting approval — [details](docs/phase3_eda.md) |
 | 4 | Feature engineering + train/test split | ⏳ |
 | 5 | Models (baselines → linear → trees → ensembles) | ⏳ |
 | 6 | Evaluation (per depth, region, season) + ARGO validation | ⏳ |
@@ -71,6 +71,8 @@ configs/
 scripts/audit/         # Phase 0: catalogue queries + grid-alignment analysis
 scripts/download/      # Phase 1: CMEMS / ARGO / IBTrACS download + verification
 scripts/harmonise/     # Phase 2: harmonise every source onto the canonical grid + figures
+scripts/integrate/     # Phase 3: exact-join data cube + train/test/buffer day labels
+scripts/eda/           # Phase 3: EDA figures/statistics, outlier vs cyclone check
 data/audit/            # Phase 0-1 results (JSON, committed)
 data/raw|interim|processed|final/   # created by later phases, not committed
 docs/
@@ -78,6 +80,7 @@ docs/
   decisions.md         # decision log
   phase1_acquisition.md # what was downloaded, checks, findings
   phase2_harmonisation.md # how every dataset was mapped onto the common grid
+  phase3_eda.md        # data cube, split sizes, EDA findings, outliers
 ```
 
 ## Reproduce Phase 0
@@ -114,6 +117,23 @@ Downloads are month by month and resumable: rerun the same command after an inte
 ```
 
 ![SST native vs harmonised](reports/figures/phase2/compare_sst.png)
+
+## Reproduce Phase 3 (data cube + EDA)
+
+```bash
+.venv/Scripts/python scripts/integrate/build_cube.py
+.venv/Scripts/python scripts/eda/eda.py
+.venv/Scripts/python scripts/eda/outliers_cyclones.py
+```
+
+### Key EDA findings
+
+- **Sea level anomaly is the best predictor of the thermocline** (Spearman 0.71 with temperature at 100 m). **SST dominates only the top ~30 m** (0.94 at the surface).
+- Removing the climatology leaves an anomaly whose std peaks at **1.58 °C at 100 m**: the hardest layer to predict.
+- **6 PCA components** capture 90% of the vertical anomaly structure.
+- SST extremes are **~10× more likely near 2021 cyclone tracks** than chance: they are cold wakes (real events), so they are kept, not deleted.
+
+![Feature-target correlation by depth](reports/figures/phase3/09_feature_target_corr_by_depth.png)
 
 ## References
 

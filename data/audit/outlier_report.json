@@ -1,0 +1,90 @@
+{
+ "z_threshold": 6.0,
+ "storms_2021": [
+  {
+   "NAME": "DIANMU",
+   "start": "2021-09-21 00:00:00",
+   "end": "2021-09-26 00:00:00",
+   "max_wind_kt": "35.0"
+  },
+  {
+   "NAME": "GULAB:SHAHEEN-GU",
+   "start": "2021-09-23 18:00:00",
+   "end": "2021-10-04 06:00:00",
+   "max_wind_kt": "70.0"
+  },
+  {
+   "NAME": "JAWAD",
+   "start": "2021-11-30 18:00:00",
+   "end": "2021-12-06 06:00:00",
+   "max_wind_kt": "35.0"
+  },
+  {
+   "NAME": "TAUKTAE",
+   "start": "2021-05-13 06:00:00",
+   "end": "2021-05-19 06:00:00",
+   "max_wind_kt": "120.0"
+  },
+  {
+   "NAME": "UNNAMED",
+   "start": "2021-04-02 00:00:00",
+   "end": "2021-11-19 03:00:00",
+   "max_wind_kt": "40.0"
+  },
+  {
+   "NAME": "YAAS",
+   "start": "2021-05-23 00:00:00",
+   "end": "2021-05-27 18:00:00",
+   "max_wind_kt": "65.0"
+  }
+ ],
+ "variables": {
+  "sst": {
+   "n_flagged": 909,
+   "frac_of_ocean_values": 0.00020998406061586086,
+   "n_robust_z": 909,
+   "n_temporal_spike": 0,
+   "frac_flags_near_cyclone_300km_7d": 0.3025302530253025,
+   "flags_by_month": {
+    "1": 26,
+    "2": 14,
+    "4": 117,
+    "5": 739,
+    "12": 13
+   },
+   "action": "kept (flag only)"
+  },
+  "sla": {
+   "n_flagged": 212,
+   "frac_of_ocean_values": 4.889073382224067e-05,
+   "n_robust_z": 212,
+   "n_temporal_spike": 0,
+   "frac_flags_near_cyclone_300km_7d": 0.0,
+   "flags_by_month": {
+    "3": 16,
+    "4": 73,
+    "5": 44,
+    "9": 59,
+    "12": 20
+   },
+   "action": "kept (flag only)"
+  },
+  "sss": {
+   "n_flagged": 613,
+   "frac_of_ocean_values": 0.00014172591179700594,
+   "n_robust_z": 613,
+   "n_temporal_spike": 20,
+   "frac_flags_near_cyclone_300km_7d": 0.011419249592169658,
+   "flags_by_month": {
+    "1": 296,
+    "3": 3,
+    "5": 5,
+    "8": 26,
+    "11": 15,
+    "12": 268
+   },
+   "action": "kept (flag only)"
+  }
+ },
+ "random_ocean_value_frac_near_cyclone": 0.02895
+}
