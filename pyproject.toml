@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "oceanembed-ml"
+version = "0.4.0"
+description = "Classical-ML reconstruction of subsurface ocean temperature (0-1000 m) from satellite surface data over the North Indian Ocean (SIH26066)."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Aryan Bhutani" }]
+dependencies = [
+  "numpy", "scipy", "pandas", "xarray", "netCDF4", "pyyaml", "requests",
+  "matplotlib", "scikit-learn", "pyarrow",
+]
+
+[project.optional-dependencies]
+data = ["copernicusmarine", "earthaccess", "argopy==1.4.0", "erddapy==2.2.4"]
+dev = ["pytest", "nbformat", "nbclient", "ipykernel"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

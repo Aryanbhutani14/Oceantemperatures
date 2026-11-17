@@ -31,7 +31,7 @@ import yaml
 
 warnings.filterwarnings("ignore")
 
-ROOT = Path(__file__).resolve().parents[2]
+from oceanembed_ml.config import ROOT
 RAW = ROOT / "data" / "raw"
 grid = yaml.safe_load((ROOT / "configs" / "grid.yaml").read_text(encoding="utf-8"))
 D = grid["domain"]

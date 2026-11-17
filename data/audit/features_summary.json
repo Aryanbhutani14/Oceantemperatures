@@ -1,0 +1,245 @@
+{
+ "embedding_explained_variance_ratio": [
+  0.23960000276565552,
+  0.19760000705718994,
+  0.12430000305175781,
+  0.11710000038146973,
+  0.11209999769926071,
+  0.09529999643564224,
+  0.049800001084804535,
+  0.01590000092983246
+ ],
+ "embedding_cumulative": 0.9518246650695801,
+ "tables": {
+  "train": {
+   "rows": 2245320,
+   "days": 189,
+   "columns": 92,
+   "months": [
+    1,
+    3,
+    4,
+    6,
+    7,
+    9,
+    10,
+    12
+   ],
+   "date_range": [
+    "2021-01-01",
+    "2021-12-31"
+   ],
+   "rows_by_region": {
+    "arabian_sea": 1213191,
+    "bay_of_bengal": 776412,
+    "other": 255717
+   },
+   "feature_nan_frac": {
+    "sst": 0.00168,
+    "sss": 0.00253,
+    "sla": 0.0,
+    "uo": 0.00067,
+    "vo": 0.00067,
+    "u10": 0.0,
+    "v10": 0.0,
+    "wind_speed": 0.0,
+    "current_speed": 0.00067,
+    "taux": 0.0,
+    "tauy": 0.0,
+    "curl_tau": 0.05943,
+    "ekman_w": 0.05943,
+    "sst_grad": 0.06111,
+    "sla_dx": 0.04141,
+    "sla_dy": 0.03923,
+    "sla_grad": 0.05943,
+    "sla_lap": 0.11044,
+    "sla_box5": 0.0,
+    "sst_box5": 0.00168,
+    "sss_box5": 0.00253,
+    "sla_mean7": 0.0,
+    "sst_mean7": 0.00168,
+    "ekman_mean7": 0.05943,
+    "sla_change7": 0.03704,
+    "sst_change7": 0.03866,
+    "sst_anom": 0.00253,
+    "lat": 0.0,
+    "lon": 0.0,
+    "sin_doy": 0.0,
+    "cos_doy": 0.0,
+    "bottom_depth": 0.0,
+    "emb_0": 0.0,
+    "emb_1": 0.0,
+    "emb_2": 0.0,
+    "emb_3": 0.0,
+    "emb_4": 0.0,
+    "emb_5": 0.0,
+    "emb_6": 0.0,
+    "emb_7": 0.0
+   },
+   "target_valid_rows_per_depth": {
+    "0": 2245320,
+    "5": 2244753,
+    "10": 2241540,
+    "20": 2132298,
+    "30": 2100168,
+    "50": 2014551,
+    "75": 1932903,
+    "100": 1883763,
+    "125": 1873557,
+    "150": 1868076,
+    "200": 1858248,
+    "300": 1844262,
+    "500": 1814778,
+    "700": 1777923,
+    "1000": 1736532
+   },
+   "size_MB": 616.8
+  },
+  "test": {
+   "rows": 1425600,
+   "days": 120,
+   "columns": 92,
+   "months": [
+    2,
+    5,
+    8,
+    11
+   ],
+   "date_range": [
+    "2021-02-01",
+    "2021-11-30"
+   ],
+   "rows_by_region": {
+    "arabian_sea": 770280,
+    "bay_of_bengal": 492960,
+    "other": 162360
+   },
+   "feature_nan_frac": {
+    "sst": 0.00168,
+    "sss": 0.00253,
+    "sla": 0.0,
+    "uo": 0.00067,
+    "vo": 0.00067,
+    "u10": 0.0,
+    "v10": 0.0,
+    "wind_speed": 0.0,
+    "current_speed": 0.00067,
+    "taux": 0.0,
+    "tauy": 0.0,
+    "curl_tau": 0.05943,
+    "ekman_w": 0.05943,
+    "sst_grad": 0.06111,
+    "sla_dx": 0.04141,
+    "sla_dy": 0.03923,
+    "sla_grad": 0.05943,
+    "sla_lap": 0.11044,
+    "sla_box5": 0.0,
+    "sst_box5": 0.00168,
+    "sss_box5": 0.00253,
+    "sla_mean7": 0.0,
+    "sst_mean7": 0.00168,
+    "ekman_mean7": 0.05943,
+    "sla_change7": 0.0,
+    "sst_change7": 0.00168,
+    "sst_anom": 0.00253,
+    "lat": 0.0,
+    "lon": 0.0,
+    "sin_doy": 0.0,
+    "cos_doy": 0.0,
+    "bottom_depth": 0.0,
+    "emb_0": 0.0,
+    "emb_1": 0.0,
+    "emb_2": 0.0,
+    "emb_3": 0.0,
+    "emb_4": 0.0,
+    "emb_5": 0.0,
+    "emb_6": 0.0,
+    "emb_7": 0.0
+   },
+   "target_valid_rows_per_depth": {
+    "0": 1425600,
+    "5": 1425240,
+    "10": 1423200,
+    "20": 1353840,
+    "30": 1333440,
+    "50": 1279080,
+    "75": 1227240,
+    "100": 1196040,
+    "125": 1189560,
+    "150": 1186080,
+    "200": 1179840,
+    "300": 1170960,
+    "500": 1152240,
+    "700": 1128840,
+    "1000": 1102560
+   },
+   "size_MB": 408.8
+  }
+ },
+ "feature_groups": {
+  "direct": [
+   "sst",
+   "sss",
+   "sla",
+   "uo",
+   "vo",
+   "u10",
+   "v10"
+  ],
+  "kinematic": [
+   "wind_speed",
+   "current_speed"
+  ],
+  "wind_forcing": [
+   "taux",
+   "tauy",
+   "curl_tau",
+   "ekman_w"
+  ],
+  "gradients": [
+   "sst_grad",
+   "sla_dx",
+   "sla_dy",
+   "sla_grad",
+   "sla_lap"
+  ],
+  "neighbourhood": [
+   "sla_box5",
+   "sst_box5",
+   "sss_box5"
+  ],
+  "temporal": [
+   "sla_mean7",
+   "sst_mean7",
+   "ekman_mean7",
+   "sla_change7",
+   "sst_change7"
+  ],
+  "anomaly": [
+   "sst_anom"
+  ],
+  "geographic": [
+   "lat",
+   "lon"
+  ],
+  "seasonal": [
+   "sin_doy",
+   "cos_doy"
+  ],
+  "static": [
+   "bottom_depth"
+  ],
+  "embedding": [
+   "emb_0",
+   "emb_1",
+   "emb_2",
+   "emb_3",
+   "emb_4",
+   "emb_5",
+   "emb_6",
+   "emb_7"
+  ]
+ },
+ "n_features": 40,
+ "seconds": 49.1
+}

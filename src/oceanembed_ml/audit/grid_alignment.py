@@ -22,7 +22,7 @@ from pathlib import Path
 
 import yaml
 
-ROOT = Path(__file__).resolve().parents[2]
+from oceanembed_ml.config import ROOT
 AUDIT = ROOT / "data" / "audit"
 grid = yaml.safe_load((ROOT / "configs" / "grid.yaml").read_text(encoding="utf-8"))
 dcfg = yaml.safe_load((ROOT / "configs" / "datasets.yaml").read_text(encoding="utf-8"))
@@ -94,46 +94,52 @@ SOURCES = {
     "cmems_winds 0.125 (u10, v10)": ("WIND_GLO_PHY_L4_MY_012_006", "cmems_obs-wind_glo_phy_my_l4_0.125deg_PT1H", "eastward_wind", 2),
 }
 
-result = {"canonical": {"res": RES, "lat0": D["lat_min"], "lon0": D["lon_min"], "edge_phase": CANON_EDGE_PHASE}, "n_days": N_DAYS, "sources": {}}
+def main() -> int:
+    result = {"canonical": {"res": RES, "lat0": D["lat_min"], "lon0": D["lon_min"], "edge_phase": CANON_EDGE_PHASE}, "n_days": N_DAYS, "sources": {}}
 
-for name, (pid, ds, var, nvars) in SOURCES.items():
-    c = _coords(pid, ds, var)
-    lat, lon = c["latitude"], c["longitude"]
-    step = float(lat["step"])
-    a = analyse(name, float(lat["min"]), float(lon["min"]), step)
-    # bbox with pad -> native points
-    nlat = math.ceil((D["lat_max"] - D["lat_min"] + 2 * PAD) / step) + 1
-    nlon = math.ceil((D["lon_max"] - D["lon_min"] + 2 * PAD) / step) + 1
-    tstep_h = c["time"].get("step_hours")
-    nt = 12 if tstep_h is None else int(N_DAYS * 24 / tstep_h)  # None = monthly climatology
-    nz = 1
-    # Surface products may still carry a single-level depth axis -> treat as 2-D.
-    if "depth" in c and c["depth"].get("values") and max(c["depth"]["values"]) >= max(DEPTHS):
-        levels = sorted(c["depth"]["values"])
-        deepest_needed = min(z for z in levels if z >= max(DEPTHS))
-        used = [z for z in levels if z <= deepest_needed]
-        nz = len(used)
-        bracket = {}
-        for d in DEPTHS:
-            if d == 0:
-                bracket[d] = {"uses": levels[0], "note": "shallowest native level (no extrapolation)"}
-            else:
-                lo = max(z for z in levels if z <= d) if any(z <= d for z in levels) else None
-                hi = min(z for z in levels if z >= d)
-                bracket[d] = {"lower": lo, "upper": hi}
-        a["vertical"] = {"n_native_levels_total": len(levels), "n_levels_to_download": nz, "deepest_level_needed": deepest_needed, "bracketing": bracket}
-    gb = nlat * nlon * nt * nz * nvars * 4 / 1e9
-    a["volume_estimate"] = {"n_lat": nlat, "n_lon": nlon, "n_time": nt, "n_levels": nz, "n_vars": nvars, "uncompressed_GB_float32": round(gb, 2)}
-    a["time_coverage"] = [c["time"].get("min_iso"), c["time"].get("max_iso")]
-    result["sources"][name] = a
+    for name, (pid, ds, var, nvars) in SOURCES.items():
+        c = _coords(pid, ds, var)
+        lat, lon = c["latitude"], c["longitude"]
+        step = float(lat["step"])
+        a = analyse(name, float(lat["min"]), float(lon["min"]), step)
+        # bbox with pad -> native points
+        nlat = math.ceil((D["lat_max"] - D["lat_min"] + 2 * PAD) / step) + 1
+        nlon = math.ceil((D["lon_max"] - D["lon_min"] + 2 * PAD) / step) + 1
+        tstep_h = c["time"].get("step_hours")
+        nt = 12 if tstep_h is None else int(N_DAYS * 24 / tstep_h)  # None = monthly climatology
+        nz = 1
+        # Surface products may still carry a single-level depth axis -> treat as 2-D.
+        if "depth" in c and c["depth"].get("values") and max(c["depth"]["values"]) >= max(DEPTHS):
+            levels = sorted(c["depth"]["values"])
+            deepest_needed = min(z for z in levels if z >= max(DEPTHS))
+            used = [z for z in levels if z <= deepest_needed]
+            nz = len(used)
+            bracket = {}
+            for d in DEPTHS:
+                if d == 0:
+                    bracket[d] = {"uses": levels[0], "note": "shallowest native level (no extrapolation)"}
+                else:
+                    lo = max(z for z in levels if z <= d) if any(z <= d for z in levels) else None
+                    hi = min(z for z in levels if z >= d)
+                    bracket[d] = {"lower": lo, "upper": hi}
+            a["vertical"] = {"n_native_levels_total": len(levels), "n_levels_to_download": nz, "deepest_level_needed": deepest_needed, "bracketing": bracket}
+        gb = nlat * nlon * nt * nz * nvars * 4 / 1e9
+        a["volume_estimate"] = {"n_lat": nlat, "n_lon": nlon, "n_time": nt, "n_levels": nz, "n_vars": nvars, "uncompressed_GB_float32": round(gb, 2)}
+        a["time_coverage"] = [c["time"].get("min_iso"), c["time"].get("max_iso")]
+        result["sources"][name] = a
 
-(AUDIT / "grid_alignment.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
+    (AUDIT / "grid_alignment.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
 
-print(f"period days = {N_DAYS}\n")
-print(f"{'source':32s} {'step':>7s} {'centre offset':>16s} {'operator':30s} {'GB':>7s}  coverage")
-for name, a in result["sources"].items():
-    v = a["volume_estimate"]
-    print(f"{name:32s} {a['native_step_deg']:7.4f} {str(a['centre_offset_deg']):>16s} {a['operator']:30s} {v['uncompressed_GB_float32']:7.2f}  {a['time_coverage'][0][:10]}..{a['time_coverage'][1][:10]}")
-    if "vertical" in a:
-        vv = a["vertical"]
-        print(f"{'':32s} levels: {vv['n_levels_to_download']} of {vv['n_native_levels_total']} (deepest needed {vv['deepest_level_needed']} m)")
+    print(f"period days = {N_DAYS}\n")
+    print(f"{'source':32s} {'step':>7s} {'centre offset':>16s} {'operator':30s} {'GB':>7s}  coverage")
+    for name, a in result["sources"].items():
+        v = a["volume_estimate"]
+        print(f"{name:32s} {a['native_step_deg']:7.4f} {str(a['centre_offset_deg']):>16s} {a['operator']:30s} {v['uncompressed_GB_float32']:7.2f}  {a['time_coverage'][0][:10]}..{a['time_coverage'][1][:10]}")
+        if "vertical" in a:
+            vv = a["vertical"]
+            print(f"{'':32s} levels: {vv['n_levels_to_download']} of {vv['n_native_levels_total']} (deepest needed {vv['deepest_level_needed']} m)")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -25,7 +25,7 @@ import yaml
 
 warnings.filterwarnings("ignore")
 
-ROOT = Path(__file__).resolve().parents[2]
+from oceanembed_ml.config import ROOT
 OUT = ROOT / "data" / "audit" / "cmems_catalogue.json"
 
 # Services that expose coordinate information (the "original-files" service does not).

@@ -26,7 +26,7 @@ import pandas as pd
 import requests
 import yaml
 
-ROOT = Path(__file__).resolve().parents[2]
+from oceanembed_ml.config import ROOT
 RAW = ROOT / "data" / "raw"
 GDAC = "https://data-argo.ifremer.fr/dac/"
 INDEX = RAW / "argo" / "index" / "ar_index_global_prof.txt.gz"

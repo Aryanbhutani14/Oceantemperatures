@@ -13,7 +13,7 @@ data/*
 !data/README.md
 
 # Model artifacts / experiment outputs (large)
-models/
+/models/
 experiments/*/model*
 *.zarr/
 *.nc

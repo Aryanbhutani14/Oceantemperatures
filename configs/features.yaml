@@ -1,0 +1,35 @@
+# ============================================================================
+# Phase 4 feature definition. Groups are toggled in Phase 5 ablations.
+# Every feature is computed from SURFACE inputs, static grid information or the
+# EXTERNAL climatology only; nothing uses the target or future days.
+# ============================================================================
+
+groups:
+  direct:        [sst, sss, sla, uo, vo, u10, v10]                     # the 7 problem-statement inputs
+  kinematic:     [wind_speed, current_speed]                           # mixing / advection strength
+  wind_forcing:  [taux, tauy, curl_tau, ekman_w]                       # wind stress, curl, Ekman pumping (thermocline lift)
+  gradients:     [sst_grad, sla_dx, sla_dy, sla_grad, sla_lap]         # fronts, geostrophic slope, eddy curvature
+  neighbourhood: [sla_box5, sst_box5, sss_box5]                        # 5x5 (1.25 deg) context, classical stand-in for a CNN receptive field
+  temporal:      [sla_mean7, sst_mean7, ekman_mean7, sla_change7, sst_change7]  # 7-day TRAILING memory (past only)
+  anomaly:       [sst_anom]                                            # SST minus external climatology (surface)
+  geographic:    [lat, lon]                                            # regional regime (ablated: memorisation risk)
+  seasonal:      [sin_doy, cos_doy]
+  static:        [bottom_depth]                                        # deepest valid standard depth of the cell
+  embedding:     [emb_0, emb_1, emb_2, emb_3, emb_4, emb_5, emb_6, emb_7]  # PCA of 3x3x7 surface patches (fit on TRAIN only)
+
+# Per-depth extra feature: climatology at the predicted depth (clim_dXX), external product.
+per_depth_feature: clim
+
+embedding:
+  patch_size: 3
+  variables: [sst, sss, sla, uo, vo, u10, v10]
+  n_components: 8
+  fit_sample: 200000
+  seed: 42
+
+temporal_window_days: 7     # <= buffer_days (7), so trailing windows never need data beyond a buffer
+neighbourhood_size: 5
+
+targets:
+  absolute: y_d{k}    # potential temperature at depth k (degC)
+  anomaly:  a_d{k}    # y - climatology (degC)  <- primary target (D-018)

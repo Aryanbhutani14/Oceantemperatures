@@ -27,8 +27,7 @@ import numpy as np
 import pandas as pd
 import xarray as xr
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "src"))
+from oceanembed_ml.config import ROOT
 from oceanembed_ml.grid import DEPTHS, LAT, LON, ConservativeRegridder, vertical_interp  # noqa: E402
 
 warnings.filterwarnings("ignore")

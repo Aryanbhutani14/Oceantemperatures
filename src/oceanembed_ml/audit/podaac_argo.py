@@ -24,7 +24,7 @@ import yaml
 
 warnings.filterwarnings("ignore")
 
-ROOT = Path(__file__).resolve().parents[2]
+from oceanembed_ml.config import ROOT
 OUT_DIR = ROOT / "data" / "audit"
 CMR = "https://cmr.earthdata.nasa.gov/search"
 

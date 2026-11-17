@@ -26,7 +26,7 @@ import pandas as pd
 import xarray as xr
 import yaml
 
-ROOT = Path(__file__).resolve().parents[2]
+from oceanembed_ml.config import ROOT
 INTERIM, PROCESSED = ROOT / "data" / "interim", ROOT / "data" / "processed"
 cfg = yaml.safe_load((ROOT / "configs" / "datasets.yaml").read_text(encoding="utf-8"))
 INPUTS = {"sst.nc": ["sst"], "sss.nc": ["sss"], "ssh.nc": ["sla", "uo", "vo"], "winds.nc": ["u10", "v10"]}

@@ -28,7 +28,7 @@ from pathlib import Path
 import numpy as np
 import yaml
 
-ROOT = Path(__file__).resolve().parents[2]
+from oceanembed_ml.config import ROOT
 _GRID = yaml.safe_load((ROOT / "configs" / "grid.yaml").read_text(encoding="utf-8"))
 DOMAIN = _GRID["domain"]
 RES = float(DOMAIN["res"])

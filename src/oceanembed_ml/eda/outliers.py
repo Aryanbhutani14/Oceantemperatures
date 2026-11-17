@@ -27,7 +27,7 @@ import xarray as xr  # noqa: E402
 from scipy.ndimage import median_filter  # noqa: E402
 
 warnings.filterwarnings("ignore")
-ROOT = Path(__file__).resolve().parents[2]
+from oceanembed_ml.config import ROOT
 Z = 6.0
 
 

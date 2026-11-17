@@ -16,8 +16,7 @@ import matplotlib.pyplot as plt  # noqa: E402
 import numpy as np  # noqa: E402
 import xarray as xr  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[2]
-sys.path.insert(0, str(ROOT / "src"))
+from oceanembed_ml.config import ROOT
 from oceanembed_ml.grid import DEPTHS  # noqa: E402
 
 warnings.filterwarnings("ignore")
