@@ -172,3 +172,16 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
   - Month-block split, buffers, past-only features, 21 tests.
   - Independent ARGO result 0.718 vs 1.119.
   - State the limitations (GLORYS assimilates ARGO, smoothness, lat/lon reliance, one year).
+
+## Report and presentation (built 2026-11-17)
+
+- Built from the owner's formats: the BMU report template (cover, declaration, contents, sections 1–9, references, appendix) and the 14-slide PPT format.
+- Files:
+  - `reports/OceanEmbed_ML_Presentation.pptx` (15 slides, speaker notes)
+  - `reports/OceanEmbed_ML_Project_Report.docx` and `.pdf` (23 pages)
+- Generators: `reports/build/build_deck.js` and `reports/build/build_report.js`. Every number is read from `results/*.json`.
+- **Placeholders the owner must fill:** team member names and enrollment numbers (only Aryan Bhutani is known), the contribution matrix, declaration signatures.
+- Deployment slide skipped (optional; nothing is deployed to a cloud platform).
+- Demo slide uses real pipeline outputs. Swap in dashboard screenshots once the dashboard exists.
+- The Word table of contents was refreshed through Word COM; rebuild the docx, then update fields in Word.
+- **Owner's decision:** the report and PPT files (`reports/*.pptx`, `*.docx`, `*.pdf`) stay local only and are git-ignored. Never commit or push them.

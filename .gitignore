@@ -32,3 +32,11 @@ Thumbs.db
 
 # Large regenerable prediction arrays (rebuilt by scripts/05_models.py)
 results/**/*.npz
+
+# Node build tools for the report/deck
+reports/build/node_modules/
+
+# Final report and presentation: kept local only, never pushed to GitHub
+reports/*.pptx
+reports/*.docx
+reports/*.pdf
