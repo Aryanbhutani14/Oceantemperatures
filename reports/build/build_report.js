@@ -381,7 +381,7 @@ body.push(H1("7. Experimental Results"),
 // ---------------- 8. Team matrix
 body.push(H1("8. Team Responsibility/Self-contribution Matrix"),
   P("All four members contributed equally to every part of the project."),
-  table(["Activity", ...TEAM.members], TEAM.activities.map(([a]) => [a, ...TEAM.members.map(() => "✓")]), [2.6, 1.1, 1.1, 1.1, 1.1]),
+  table(["Activity", ...TEAM.members], TEAM.activities.map(([a]) => [a, ...TEAM.members.map(() => "Yes")]), [2.6, 1.1, 1.1, 1.1, 1.1]),
   tcap("Contribution of each team member (equal contribution)."),
 );
 

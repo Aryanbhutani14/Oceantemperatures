@@ -418,7 +418,7 @@ pres.addSection({ title: "Demonstration" });
 // ================================================================ 17. Contribution matrix
 {
   const s = content("Demonstration", "Team responsibility and self-contribution matrix");
-  const rows = [[th("Activity"), ...TEAM.members.map((m) => th(m))]].concat(TEAM.activities.map(([a]) => [td(a), ...TEAM.members.map(() => td("✓", { align: "center", bold: true, color: NAVY }))]));
+  const rows = [[th("Activity"), ...TEAM.members.map((m) => th(m))]].concat(TEAM.activities.map(([a]) => [td(a), ...TEAM.members.map(() => td("Yes", { align: "center", color: NAVY }))]));
   s.addTable(zebra(rows), { x: M, y: 1.15, w: W - 2 * M, colW: [4.43, 1.95, 1.95, 1.95, 1.95], rowH: 0.42, margin: [0.01, 0.07, 0.01, 0.07], ...TB });
   s.addText("All four members contributed equally to every activity.", { x: M, y: 6.6, w: 8, h: 0.35, fontSize: 12, color: DGREY, margin: 0, isTextBox: true });
 }
