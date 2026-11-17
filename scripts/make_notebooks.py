@@ -31,7 +31,7 @@ print("project root:", ROOT)"""
 NOTEBOOKS = {
 "01_data_audit.ipynb": [
 ("md", """# 01 · Data audit (Phase 0–1)
-**Question:** which datasets exist for SIH26066, do they cover 2021, and how does each one's grid line up with ours?
+**Question:** which datasets exist for this problem, do they cover 2021, and how does each one's grid line up with ours?
 
 Everything below is read from the JSON the audit/download code wrote (`data/audit/`), nothing is typed by hand.
 Code: `src/oceanembed_ml/audit/`, `src/oceanembed_ml/data/download_*.py`."""),

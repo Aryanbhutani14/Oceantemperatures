@@ -11,7 +11,7 @@
 | | |
 |---|---|
 | Label | 1 if **TCHP ≥ 60 kJ cm⁻²** else 0. TCHP comes from the GLORYS temperature profile, using the unit-tested function from Phase 6. Values of about 50–60 kJ cm⁻² are the commonly used level above which tropical cyclones tend to intensify (Leipper & Volgenau 1972; Shay et al. 2000). |
-| Why this task | It turns the regression into a decision people can act on, and fits the problem statement's **Disaster Management** theme. |
+| Why this task | It turns the regression into a decision people can act on, and is directly relevant to cyclone and disaster management. |
 | Class balance | **47% positive** (balanced), so accuracy is meaningful. F1 and ROC-AUC are also reported. |
 | Inputs | The same 40 surface features + `clim_tchp` (TCHP of the external climatology, known in advance, so no leakage) |
 | Split | The same months as everywhere: train 8 months, test Feb, May, Aug, Nov |

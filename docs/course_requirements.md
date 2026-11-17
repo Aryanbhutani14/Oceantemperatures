@@ -10,9 +10,23 @@
 | 6 | **Ensemble techniques** | Bagging, Random Forest, Gradient Boosting, averaging ensemble (with a ≥1% CV-gain rule) | `models/zoo.py` · `notebooks/05`, `07` · [phase5_models.md](phase5_models.md) | Tree RMSE 0.743 → RF 0.639 → GB 0.634 (variance reduction); classification tree 0.904 → RF 0.930 → GB 0.937 |
 | 7 | **Performance analysis** | 13 regression and 9 classification models on identical test rows; RMSE, MAE, bias, R², r, skill vs climatology, % within ±1 °C; accuracy, precision, recall, F1, ROC/AUC, confusion matrices; by depth, region, season, day; **independent ARGO validation**; ocean indicators; cost (fit/predict time) | `models/metrics.py`, `evaluation/`, `validation/argo.py`, `science/` · `notebooks/05`, `06`, `07` · [phase5_models.md](phase5_models.md), [phase6_evaluation.md](phase6_evaluation.md) | Final regression RMSE 0.579 °C (clim 0.999), 92% of predictions within ±1 °C; vs ARGO 0.718 °C (clim 1.119); TCHP error halved |
 
-**Extra beyond the minimum:**
-- Linear regression by **gradient descent implemented from scratch**, verified against OLS
-- **PCA** for vertical modes and for the surface embedding
-- Data harmonisation of 8 datasets
-- Leakage-safe validation design
-- 21 unit tests
+
+## Alignment with the CSE2032 handout
+
+| Method used | Handout topic | Status |
+|---|---|---|
+| Linear regression, cost function, gradient descent (from scratch) | Regression; cost function and gradient descent | In syllabus |
+| Ridge, Lasso, validation curves, bias–variance | Regularization; under/overfitting | In syllabus |
+| Logistic regression (L1/L2), SVM, decision tree, KNN | Classification | In syllabus |
+| Bagging, random forest, gradient boosting, averaging ensemble | Ensemble learning | In syllabus |
+| PCA regression, PCA summary of surface patterns | Dimension reduction (PCA) | In syllabus |
+| GroupKFold CV, GridSearchCV, learning curve | Cross-validation, hyperparameter tuning | In syllabus (month grouping needed: neighbouring days are near-duplicates) |
+| Accuracy, precision, recall, F1, confusion matrix, ROC/AUC, R², bootstrap CIs | Model validation and selection | In syllabus |
+| Robust z-score outlier screening | Anomaly detection (density estimation) | In syllabus (z-score threshold = Gaussian density threshold) |
+
+**Small extensions, each with a reason:**
+- **SVR and KNN regression:** the syllabus teaches SVM and KNN for classification; here the same algorithms are applied to a regression target.
+- **Data harmonisation, ARGO collocation, oceanographic indicators:** domain-specific data preparation needed to build a valid dataset (the course overview covers importing, processing and transforming data). These are not extra modelling methods.
+- **Permutation importance and ablation:** used only to explain the results.
+
+**Syllabus topics not used:** clustering (DBSCAN, BIRCH, K-Means), reinforcement learning, Bayesian learning, kernel PCA, neural networks, deployment. None of them is among the 7 required components.

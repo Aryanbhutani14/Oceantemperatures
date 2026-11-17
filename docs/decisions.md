@@ -5,7 +5,7 @@ status.
 
 | ID | Date | Decision | Status | Rationale |
 |---|---|---|---|---|
-| D-001 | 2026-11-17 | **Pure classical ML only**: no neural networks. The SIH26066 problem statement asks for deep learning; this project studies how far classical ML can go. PCA gives a classical "surface embedding". | Accepted | Academic project for CSE2032 |
+| D-001 | 2026-11-17 | Models are restricted to the CSE2032 syllabus (regression, regularization, classification, ensembles, PCA). | Accepted | Course project for CSE2032 |
 | D-002 | 2026-11-17 | Canonical grid = problem-statement grid: cell centres 5–30°N × 45–105°E at 0.25° (101 × 241), daily UTC, 15 standard depths. | Accepted | Fixed by the problem statement |
 | D-003 | 2026-11-17 | **Study period = one year, 2021-01-01 → 2021-12-31.** | Accepted | Submission deadline. 2021 includes cyclones Tauktae, Yaas, Gulab, Shaheen and Jawad, plus 4,071 ARGO profiles. |
 | D-004 | 2026-11-17 | Target: GLORYS member of the CMEMS ensemble reanalysis (`thetao_glor`, 0.25°). Its grid centres coincide exactly with ours, so no horizontal regridding is needed. | Accepted | Audit: centre offset (0, 0) |
@@ -24,7 +24,7 @@ status.
 | D-017 | 2026-11-17 | One conservative (area-weighted) regridding operator is used for all sources. It reduces to identity or an exact block mean where grids nest. Coastal cells with no satellite data stay NaN. | Accepted | Consistent, tested (`tests/test_regrid.py`), no fabricated values |
 | D-018 | 2026-11-17 | Primary target = **anomaly** `a = T − external climatology`; prediction = climatology + predicted anomaly. Absolute temperature is kept for ablation. | Accepted | Phase 3 EDA: the climatology removes most of the variance (surface std 1.73 → 0.67 °C) |
 | D-019 | 2026-11-17 | Features are engineered on the grid, then flattened (40 features, `configs/features.yaml`). Temporal windows are trailing only, 7 days (= buffer). | Accepted | Spatial features need neighbours; past-only windows avoid temporal leakage |
-| D-020 | 2026-11-17 | "Classical satellite embedding" = PCA of standardised 3×3×7 surface patches → 8 components, fitted on train days only. | Accepted | Answers the problem statement's embedding deliverable with a syllabus method (PCA), no neural networks |
+| D-020 | 2026-11-17 | Surface-pattern summary = PCA of standardised 3×3×7 surface patches → 8 components, fitted on train days only. | Accepted | Compact summary of the local surface pattern using a syllabus method (PCA) |
 | D-021 | 2026-11-17 | Project structure: installable package `src/oceanembed_ml` (`pip install -e .`), thin CLIs `scripts/NN_*.py`, executed notebooks in `notebooks/` for exploration/EDA only, raw/processed data git-ignored. | Accepted | Course requirement: a proper GitHub Python project with reproducible phase outputs |
 | D-022 | 2026-11-17 | Model selection = lowest **GroupKFold-by-month CV** RMSE on train months, never test scores. An averaging ensemble is adopted only if it improves CV RMSE by ≥ 1%. The GB+RF ensemble gained 0.004%, so it was **not adopted**; **Gradient Boosting is selected**. | Accepted | Avoids adding complexity for presentation; the choice is fixed before test results are seen |
 | D-023 | 2026-11-17 | Training-sample sizes: 400k rows (KNN 150k, SVR 10k), tuning set 120k, a fixed 200k-row test subset for all models (fingerprinted). | Accepted | Compute: SVR prediction is O(n_SV) per row (45 min for 200k rows); the Phase 5 ablation learning curve checks that 400k rows is enough |

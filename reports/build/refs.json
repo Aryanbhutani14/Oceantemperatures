@@ -1,0 +1,22 @@
+[
+ "Rebert, J.-P., Donguy, J.-R., Eldin, G., Wyrtki, K. (1985). Relations between sea level, thermocline depth, heat content, and dynamic height in the tropical Pacific Ocean. Journal of Geophysical Research, 90(C6), 11719–11725.",
+ "Shay, L.K., Goni, G.J., Black, P.G. (2000). Effects of a warm oceanic feature on Hurricane Opal. Monthly Weather Review, 128(5), 1366–1383.",
+ "Ali, M.M., Swain, D., Weller, R.A. (2004). Estimation of ocean subsurface thermal structure from surface parameters: a neural network approach. Geophysical Research Letters, 31, L20308.",
+ "Buongiorno Nardelli, B., Santoleri, R. (2005). Methods for the reconstruction of vertical profiles from surface data: multivariate analyses, residual GEM, and variable temporal signals in the North Pacific Ocean. Journal of Atmospheric and Oceanic Technology, 22, 1762–1781.",
+ "Guinehut, S., Dhomps, A.-L., Larnicol, G., Le Traon, P.-Y. (2012). High resolution 3-D temperature and salinity fields derived from in situ and satellite observations. Ocean Science, 8, 845–857.",
+ "Nagamani, P.V., Ali, M.M., Goni, G.J. et al. (2012). Validation of satellite-derived tropical cyclone heat potential with in situ observations in the North Indian Ocean. Remote Sensing Letters, 3.",
+ "Su, H., Wu, X., Yan, X.-H., Kidwell, A. (2015). Estimation of subsurface temperature anomaly in the Indian Ocean during recent global surface warming hiatus from satellite measurements: a support vector machine approach. Remote Sensing of Environment, 160, 63–71.",
+ "Su, H., Li, W., Yan, X.-H. (2018). Retrieving temperature anomaly in the global subsurface and deeper ocean from satellite observations. Journal of Geophysical Research: Oceans, 123, 399–410.",
+ "Su, H., Yang, X., Lu, W., Yan, X.-H. (2019). Estimating subsurface thermohaline structure of the global ocean using surface remote sensing observations. Remote Sensing, 11(13), 1598.",
+ "Qi, J., Liu, C., Chi, J., Li, D., Gao, L., Yin, B. (2022). An ensemble-based machine learning model for estimation of subsurface thermal structure in the South China Sea. Remote Sensing, 14(13), 3207.",
+ "Lellouche, J.-M. et al. (2021). The Copernicus global 1/12° oceanic and sea ice GLORYS12 reanalysis. Frontiers in Earth Science, 9, 698876.",
+ "Good, S. et al. (2020). The current configuration of the OSTIA system for operational production of foundation sea surface temperature and ice concentration analyses. Remote Sensing, 12(4), 720.",
+ "E.U. Copernicus Marine Service products: GLOBAL_MULTIYEAR_PHY_ENS_001_031, GLOBAL_MULTIYEAR_PHY_001_030, SST_GLO_SST_L4_REP_OBSERVATIONS_010_011, MULTIOBS_GLO_PHY_S_SURFACE_MYNRT_015_013, SEALEVEL_GLO_PHY_L4_MY_008_047, WIND_GLO_PHY_L4_MY_012_006.",
+ "Argo (2000). Argo float data and metadata from the Global Data Assembly Centre (Argo GDAC). SEANOE. doi:10.17882/42182.",
+ "Knapp, K.R. et al. (2010). The International Best Track Archive for Climate Stewardship (IBTrACS). Bulletin of the American Meteorological Society, 91, 363–376.",
+ "Leipper, D.F., Volgenau, D. (1972). Hurricane heat potential of the Gulf of Mexico. Journal of Physical Oceanography, 2, 218–224.",
+ "Large, W.G., Pond, S. (1981). Open ocean momentum flux measurements in moderate to strong winds. Journal of Physical Oceanography, 11, 324–336.",
+ "McDougall, T.J., Barker, P.M. (2011). Getting started with TEOS-10 and the Gibbs Seawater (GSW) Oceanographic Toolbox. SCOR/IAPSO WG127.",
+ "Pedregosa, F. et al. (2011). Scikit-learn: machine learning in Python. Journal of Machine Learning Research, 12, 2825–2830.",
+ "Indian National Centre for Ocean Information Services (INCOIS), Ministry of Earth Sciences: problem statement on reconstructing subsurface ocean temperature from satellite observations."
+]

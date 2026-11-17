@@ -1,1 +1,1 @@
-"""OceanEmbed-ML: classical-ML reconstruction of subsurface ocean temperature."""
+"""OceanEmbed-ML: machine-learning reconstruction of subsurface ocean temperature."""

@@ -5,10 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "oceanembed-ml"
 version = "0.4.0"
-description = "Classical-ML reconstruction of subsurface ocean temperature (0-1000 m) from satellite surface data over the North Indian Ocean (SIH26066)."
+description = "Machine-learning reconstruction of subsurface ocean temperature (0-1000 m) from satellite surface data over the North Indian Ocean."
 readme = "README.md"
 requires-python = ">=3.11"
-authors = [{ name = "Aryan Bhutani" }]
+authors = [{ name = "Tanmay Sangwan" }, { name = "Tanmay Kandwal" }, { name = "Aryan Bhutani" }, { name = "Prashast" }]
 dependencies = [
   "numpy", "scipy", "pandas", "xarray", "netCDF4", "pyyaml", "requests",
   "matplotlib", "scikit-learn", "pyarrow",

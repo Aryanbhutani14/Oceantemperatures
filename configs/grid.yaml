@@ -1,7 +1,7 @@
 # ============================================================================
 # Canonical grid — single source of truth for the spatial/temporal/vertical index.
-# Values marked [PS] come from the official SIH26066 problem statement and must
-# not be changed.
+# Values marked [PS] follow the INCOIS problem statement this project is aligned with
+# and must not be changed.
 # ============================================================================
 
 # [PS] North Indian Ocean. Values are CELL CENTRES; cell (i, j) spans

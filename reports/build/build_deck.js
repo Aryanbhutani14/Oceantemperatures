@@ -11,7 +11,7 @@ const SKILL = process.env.PPTX_SKILL_DIR;
 const J = (p) => JSON.parse(fs.readFileSync(path.join(ROOT, p), "utf8").replace(/\bNaN\b/g, "null"));
 // figures produced by the pipeline, white margins trimmed by trim_figures.py
 const FIG = (p) => path.join(__dirname, "img", p.replace("/", "_"));
-const OUT = path.join(ROOT, "reports", "OceanEmbed_ML_Presentation.pptx");
+const OUT = path.join(ROOT, "reports", process.env.DECK_NAME || "OceanEmbed_ML_Presentation.pptx");
 
 const T5 = J("results/phase5/test_metrics.json");
 const CV5 = J("results/phase5/cv_selection.json");
@@ -20,6 +20,8 @@ const TCV = J("results/phase5/target_cv.json");
 const AB = J("results/phase5/ablation.json");
 const FT = J("results/phase6/full_test_metrics.json");
 const AR = J("results/phase6/argo_validation.json");
+const AU = J("results/validation/audit.json");
+const REFS = JSON.parse(fs.readFileSync(path.join(__dirname, "refs.json"), "utf8"));
 const IND = J("results/phase6/indicators.json");
 const CL = J("results/phase7/classification.json");
 const RG = J("results/phase7/regularization.json");
@@ -33,9 +35,9 @@ const THEME = {
   headFontFace: "Cambria",
   bodyFontFace: "Calibri",
   colors: {
-    dk1: "0B1F33", lt1: "FFFFFF", dk2: "123A5A", lt2: "EAF3F6",
-    accent1: "0E7C86", accent2: "F26B3A", accent3: "2B9FD8", accent4: "8FB8C8", accent5: "5E6B78", accent6: "F2B134",
-    hlink: "0E7C86", folHlink: "5E6B78",
+    dk1: "14213D", lt1: "FFFFFF", dk2: "2B3A55", lt2: "F2F2F2",
+    accent1: "1F3864", accent2: "2E5597", accent3: "595959", accent4: "BFBFBF", accent5: "7F7F7F", accent6: "D9D9D9",
+    hlink: "1F3864", folHlink: "595959",
   },
 };
 const HEX = THEME.colors;
@@ -75,7 +77,7 @@ pres.defineSlideMaster({
   slideNumber: { x: 12.4, y: 7.02, w: 0.6, h: 0.3, color: C.accent5, fontSize: 10 },
 });
 
-const TH = { bold: true, color: HEX.lt1, fill: { color: HEX.accent1 }, fontSize: 12, valign: "middle" };
+const TH = { bold: true, color: HEX.lt1, fill: { color: HEX.accent1 }, fontSize: 12, valign: "middle" };  // navy header, white text
 const td = (t, o = {}) => ({ text: String(t), options: { fontSize: 12, color: HEX.dk1, valign: "middle", ...o } });
 const th = (t, o = {}) => ({ text: t, options: { ...TH, ...o } });
 function zebra(rows) {
@@ -102,20 +104,20 @@ const content = (section) => {
 pres.addSection({ title: "Introduction" });
 {
   const s = pres.addSlide({ masterName: "Title Dark", sectionTitle: "Introduction" });
-  s.addText("SIH 2026 · SIH26066 (INCOIS, Ministry of Earth Sciences) · CSE2032 Machine Learning", { x: M, y: 0.45, w: 12, h: 0.35, fontSize: 14, color: C.accent4, margin: 0, isTextBox: true });
+  s.addText("CSE2032 Machine Learning · Course Project · BML Munjal University", { x: M, y: 0.45, w: 12, h: 0.35, fontSize: 14, color: C.accent4, margin: 0, isTextBox: true });
   s.addText("OceanEmbed-ML", { x: M, y: 0.95, w: 12, h: 0.95, fontSize: 48, bold: true, color: C.background1, fontFace: THEME.headFontFace, margin: 0, isTextBox: true });
-  s.addText("Reconstructing subsurface ocean temperature (0–1000 m) of the North Indian Ocean from satellite surface data with classical machine learning",
+  s.addText("Reconstructing subsurface ocean temperature (0–1000 m) of the North Indian Ocean from satellite surface data using machine learning",
     { x: M, y: 1.9, w: 8.2, h: 1.0, fontSize: 18, color: C.background2, margin: 0, isTextBox: true });
   s.addText([
     { text: "Team", options: { bold: true, color: C.accent6, breakLine: true } },
-    { text: "Aryan Bhutani — <Enrollment No.>", options: { breakLine: true } },
-    { text: "<Name of Student-2> — <Enrollment No.>", options: { breakLine: true } },
-    { text: "<Name of Student-3> — <Enrollment No.>", options: { breakLine: true } },
-    { text: "<Name of Student-4> — <Enrollment No.>" },
+    { text: "Tanmay Sangwan — 240669", options: { breakLine: true } },
+    { text: "Tanmay Kandwal — 240670", options: { breakLine: true } },
+    { text: "Aryan Bhutani — 240406", options: { breakLine: true } },
+    { text: "Prashast — 240586" },
   ], { x: 9.1, y: 1.9, w: 3.8, h: 1.9, fontSize: 13, color: C.background1, margin: 0, valign: "top", paraSpaceAfter: 4, isTextBox: true });
-  s.addText("Department of CSE · School of Engineering and Technology · BML Munjal University · November 2026", { x: M, y: 3.25, w: 8.3, h: 0.35, fontSize: 12, color: C.accent4, margin: 0, isTextBox: true });
+  s.addText("Aligned with a problem statement of INCOIS, Ministry of Earth Sciences · Department of CSE, BMU · November 2026", { x: M, y: 3.25, w: 8.3, h: 0.35, fontSize: 12, color: C.accent4, margin: 0, isTextBox: true });
   fitImage(s, FIG("phase6/01_map_T100_tauktae.png"), 0.3, 3.85, 12.73, 3.1, "Title map: truth vs prediction at 100 m");
-  s.addNotes("Introduce the problem: satellites only see the ocean surface, but cyclones, fisheries and climate depend on the subsurface. The strip shows our real output: GLORYS truth vs our ML prediction vs error at 100 m on 15 May 2021, while cyclone Tauktae was active.");
+  s.addNotes("Introduce the problem (a CSE2032 course project aligned with an INCOIS, Ministry of Earth Sciences problem statement): satellites only see the ocean surface, but cyclones, fisheries and climate depend on the subsurface. The strip shows our real output: GLORYS truth vs our ML prediction vs error at 100 m on 15 May 2021, while cyclone Tauktae was active.");
 }
 
 // ================================================================ Slide 1: objectives & deliverables
@@ -138,7 +140,7 @@ pres.addSection({ title: "Introduction" });
       s.addText(t, { x: x + 1.1, y: 2.35 + k * 1.8, w: colW - 1.45, h: 1.6, fontSize: 15, color: C.text1, margin: 0, valign: "top", isTextBox: true });
     });
   });
-  s.addNotes("Objective 1 is the regression problem from SIH26066. Objective 2 adds the course requirements: fair model comparison and a classification task. The deliverables are all on GitHub: github.com/Aryanbhutani14/Oceantemperatures.");
+  s.addNotes("Objective 1 is the core regression problem. Objective 2 covers the course requirements: fair model comparison, regularization, ensembles and a classification task.");
 }
 
 // ================================================================ Slide 2: literature review
@@ -146,17 +148,23 @@ pres.addSection({ title: "Background" });
 {
   const s = content("Background");
   s.addText("Literature review: earlier work on the same kind of data", { placeholder: "title" });
-  const rows = [
-    [th("Study"), th("Data (surface → subsurface)"), th("Method"), th("Region / depth"), th("Takeaway for us")],
-    [td("Ali, Swain & Weller (2004), GRL", { bold: true }), td("SST, SSH, wind stress, heat fluxes → mooring temperature profiles"), td("Artificial neural network"), td("Arabian Sea, upper ocean"), td("Surface fields carry thermocline information; avg RMS error ≈ 0.58 °C")],
-    [td("Guinehut et al. (2012), Ocean Science: ARMOR3D", { bold: true }), td("Satellite SST, SLA + ARGO profiles"), td("Multiple linear regression + optimal interpolation"), td("Global, 0–1500 m"), td("Operational statistical (non-DL) product: linear methods are a strong baseline")],
-    [td("Su et al. (2015), Remote Sens. Environ.", { bold: true }), td("SST, SSH, SSS anomalies → ARGO temperature anomaly"), td("Support vector regression"), td("Indian Ocean, 0–1000 m"), td("Adding SSS improves skill (MSE ≈ 12% lower): we include salinity")],
-    [td("Su, Li & Yan (2018), JGR Oceans", { bold: true }), td("SSH, SST, SSS, wind → ARGO temperature anomaly"), td("Random forest"), td("Global, to 1000 m+"), td("Tree ensembles work well: we compare RF and boosting")],
-    [td("OceanEmbed reference (SIH26066, GitHub)", { bold: true }), td("Same inputs as ours: OSTIA, SMOS/SMAP, DUACS, winds → GLORYS"), td("U-Net CNN design (deep learning)"), td("North Indian Ocean, 15 depths"), td("No published metrics; we test how far classical ML goes without DL")],
-    [td("This project (2026)", { bold: true, color: HEX.accent2 }), td("OSTIA, SSS L4, DUACS, ASCAT L4 winds → GLORYS; ARGO for validation"), td("13 classical models; gradient boosting + climatology feature"), td("North Indian Ocean, 0–1000 m, daily 0.25°"), td(`Test RMSE ${f2(FT.overall.rmse)} °C; ${f2(AR.overall.pred.rmse)} °C vs ARGO`, { bold: true })],
+  const L = [
+    ["Rebert et al. (1985), JGR", "Statistical regression", "Sea level, XBT; tropical Pacific", "Sea level tracks thermocline depth: basis for SLA as our key input"],
+    ["Shay, Goni & Black (2000), MWR", "Heat content above 26 °C (TCHP)", "Altimetry, profiles; Gulf of Mexico", "Warm subsurface water fuels cyclones: our TCHP task"],
+    ["Ali, Swain & Weller (2004), GRL", "Artificial neural network", "SST, SSH, winds; Arabian Sea", "Surface data reproduce thermal structure (RMS ≈ 0.58 °C)"],
+    ["Buongiorno Nardelli & Santoleri (2005), JTECH", "Multivariate EOF (PCA)", "Surface + CTD; North Pacific", "Few vertical modes explain profiles: our PCA regression"],
+    ["Guinehut et al. (2012), Ocean Sci.", "Multiple linear regression + OI", "SST, SLA, ARGO; global 0–1500 m", "Linear regression is a strong baseline"],
+    ["Nagamani et al. (2012), RSL", "Regression-based TCHP", "SST, SSH, in situ; North Indian Ocean", "Satellite TCHP skilful (R² ≈ 0.65): same region"],
+    ["Su et al. (2015), RSE", "Support vector regression", "SST, SSH, SSS; Indian Ocean 0–1000 m", "Salinity lowers MSE ≈ 12%: we use SSS, compare SVR"],
+    ["Su, Li & Yan (2018), JGR Oceans", "Random forest", "SSH, SST, SSS, wind; global", "Tree ensembles work well: we compare RF"],
+    ["Su et al. (2019), Remote Sens.", "Gradient boosting (XGBoost)", "Surface fields, ARGO; global 0–2000 m", "Boosting beats plain GBDT: we compare boosting"],
+    ["Qi et al. (2022), Remote Sens.", "Stacked tree ensemble", "Surface data, ARGO; South China Sea", "Ensembles improve accuracy: our ensembles"],
   ];
-  s.addTable(zebra(rows), { x: M, y: 1.25, w: W - 2 * M, colW: [2.55, 2.75, 2.15, 1.9, 2.98], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.62, margin: 0.06 });
-  s.addNotes("All earlier work uses the same family of data: satellite SST/SSH/SSS (+wind) as inputs, ARGO or reanalysis as truth. Classical ML (SVR, random forest) is well established; the SIH26066 reference proposes deep learning without published results, so our contribution is a rigorous classical-ML baseline for this exact problem and region.");
+  const rows = [[th("Study"), th("Method"), th("Data; region"), th("Relevance to this project")]].concat(
+    L.map((r) => r.map((c, i) => td(c, i === 0 ? { bold: true, fontSize: 11 } : { fontSize: 11 }))),
+    [[td("This project (2026)", { bold: true, color: HEX.accent2, fontSize: 11 }), td("13 syllabus models; boosting selected", { fontSize: 11 }), td("OSTIA, SSS, DUACS, winds → GLORYS; North Indian Ocean", { fontSize: 11 }), td(`Test RMSE ${f2(FT.overall.rmse)} °C; ${f2(AR.overall.pred.rmse)} °C vs ARGO`, { bold: true, fontSize: 11 })]]);
+  s.addTable(zebra(rows), { x: M, y: 1.15, w: W - 2 * M, colW: [3.0, 2.55, 3.15, 3.63], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.47, margin: [0.02, 0.06, 0.02, 0.06] });
+  s.addNotes("All ten studies use the same family of data: satellite SST, sea level/SSH, salinity and winds as inputs, with in-situ profiles or reanalysis as truth. They show four things we build on: sea level is the key thermocline signal, salinity matters in the Indian Ocean, SVR and tree ensembles are strong methods, and TCHP is a validated cyclone-relevant quantity in this region.");
 }
 
 // ================================================================ Slide 3: dataset
@@ -181,7 +189,7 @@ pres.addSection({ title: "Background" });
     [td("label", { bold: true }), td("1 if TCHP ≥ 60 kJ cm⁻² (cyclone-favourable), else 0", { bold: true }), td("int8 (0/1)"), td("target (classification)", { bold: true, color: HEX.accent2 })],
     [td("time, cell_id, region"), td("UTC date, grid cell, Arabian Sea / Bay of Bengal"), td("datetime64, int32, category"), td("metadata")],
   ];
-  s.addTable(zebra(rows), { x: 3.95, y: 1.3, w: 8.88, colW: [1.7, 4.3, 1.45, 1.43], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.47, margin: 0.06 });
+  s.addTable(zebra(rows), { x: 3.95, y: 1.3, w: 8.88, colW: [1.7, 4.3, 1.45, 1.43], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.47, margin: 0.06 });
   s.addNotes("Each row is one 0.25° ocean grid cell on one day. 11,880 ocean cells x 365 days, minus 56 buffer days. Inputs are what satellites measure; the target is the GLORYS reanalysis temperature at 15 standard depths. The classification label is derived from the same profile.");
 }
 
@@ -201,7 +209,7 @@ pres.addSection({ title: "Methodology" });
     [td("Strong space–time autocorrelation"), td("Neighbouring days are near-duplicates"), td("Whole-month test split + 7-day buffers; past-only windows")],
     [td("Climatology is biased for 2021"), td("Bias −0.32 °C over the test months"), td("Climatology used as an input feature (chosen by CV)")],
   ];
-  s.addTable(zebra(rows), { x: M, y: 1.25, w: W - 2 * M, colW: [3.6, 4.6, 4.13], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.6, margin: 0.07 });
+  s.addTable(zebra(rows), { x: M, y: 1.25, w: W - 2 * M, colW: [3.6, 4.6, 4.13], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.6, margin: 0.07 });
   s.addNotes("Every engineered feature answers an EDA finding. Data issues found: Persian Gulf extremes (real), Tibetan lakes in OSTIA and land values in winds (masked), a few coastal gaps (kept as NaN, imputed inside the pipeline).");
 }
 
@@ -230,7 +238,7 @@ pres.addSection({ title: "Methodology" });
     [td("PCA regression (8 vertical modes)"), td("Predicts whole profiles consistently through dimension reduction")],
     [td("Logistic Regression L1/L2, SVM, Decision Tree, KNN"), td("Classification of cyclone-favourable ocean (TCHP ≥ 60)")],
   ];
-  s.addTable(zebra(rows), { x: 5.05, y: 1.3, w: 7.78, colW: [3.5, 4.28], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.62, margin: 0.07 });
+  s.addTable(zebra(rows), { x: 5.05, y: 1.3, w: 7.78, colW: [3.5, 4.28], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.62, margin: 0.07 });
   s.addNotes("Climatology is the natural baseline in oceanography: a model is only useful if it beats the long-term average. Each comparison model covers a syllabus topic and a different inductive bias (linear, distance-based, kernel, rules, dimension reduction).");
 }
 
@@ -283,12 +291,12 @@ pres.addSection({ title: "Results" });
       const hi = n === "final_gb_clim_feature" ? { bold: true, color: HEX.accent2 } : {};
       return [td(label(n), hi), td(cv ? f3(cv) : "—", hi), td(f3(m.overall.rmse), hi), td(f2(m.mean_skill_over_depths), hi), td(f2(m.per_depth["100"].rmse), hi)];
     }));
-  s.addTable(zebra(rows), { x: M, y: 1.2, w: 6.6, colW: [2.75, 0.95, 1.15, 0.75, 1.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.31, margin: [0.01, 0.05, 0.01, 0.05], fontSize: 11 });
+  s.addTable(zebra(rows), { x: M, y: 1.2, w: 6.6, colW: [2.75, 0.95, 1.15, 0.75, 1.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.31, margin: [0.01, 0.05, 0.01, 0.05], fontSize: 11 });
   s.addText("* CV RMSE of the anomaly on train months (GroupKFold by month); the final model's CV is on absolute temperature. Skill = 1 − MSE/MSE(climatology). Test = identical 200k rows.",
     { x: M, y: 6.5, w: 6.6, h: 0.45, fontSize: 10, color: C.accent5, margin: 0, isTextBox: true });
   s.addChart(pres.charts.BAR, [{ name: "Test RMSE (°C)", labels: names.map(label), values: names.map((n) => Number(T5.models[n].overall.rmse.toFixed(3))) }], {
     x: 7.35, y: 1.2, w: 5.5, h: 5.7, barDir: "bar", showTitle: true, title: "Test RMSE (°C), lower is better", titleFontSize: 13, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
-    chartColors: names.map((n) => (n === "final_gb_clim_feature" ? HEX.accent2 : n === "climatology" ? HEX.accent5 : HEX.accent1)),
+    chartColors: names.map((n) => (n === "final_gb_clim_feature" ? HEX.accent1 : n === "climatology" ? "595959" : "A6A6A6")),
     showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 9, dataLabelColor: HEX.dk1, dataLabelFontFace: "+mn-lt", dataLabelFormatCode: "0.000",
     catAxisLabelColor: HEX.dk1, valAxisLabelColor: HEX.accent5, catAxisLabelFontSize: 10, valAxisLabelFontSize: 9, catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-lt",
     valGridLine: { color: "D5E3EA", size: 0.5 }, catGridLine: { style: "none" }, showLegend: false, valAxisMinVal: 0, valAxisMaxVal: 1.1,
@@ -308,7 +316,7 @@ pres.addSection({ title: "Results" });
     const v = (x) => (x === undefined || x === null || Number.isNaN(x) ? "—" : f3(x));
     return [td(nm[n], hi), td(v(m.cv_auc), hi), td(v(m.accuracy), hi), td(v(m.precision), hi), td(v(m.recall), hi), td(v(m.f1), hi), td(v(m.roc_auc), hi)];
   }));
-  s.addTable(zebra(rows), { x: M, y: 1.2, w: 7.3, colW: [2.2, 0.85, 0.85, 0.85, 0.8, 0.8, 0.95], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.42, margin: 0.04, fontSize: 11 });
+  s.addTable(zebra(rows), { x: M, y: 1.2, w: 7.3, colW: [2.2, 0.85, 0.85, 0.85, 0.8, 0.8, 0.95], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.42, margin: 0.04, fontSize: 11 });
   s.addText(`Task: TCHP ≥ 60 kJ cm⁻² from surface data only. ${Math.round(CL.positive_rate.test_eval * 100)}% positive (balanced). GridSearchCV + GroupKFold by month; identical ${CL.n_rows.test_eval.toLocaleString("en-US")} test rows.`,
     { x: M, y: 5.5, w: 7.3, h: 0.55, fontSize: 12, color: C.text1, margin: 0, isTextBox: true });
   s.addText(`The climatology rule misses one third of favourable areas (recall ${f2(CL.models.climatology_rule.recall)}); ML models catch about 93–94%.`,
@@ -343,14 +351,44 @@ pres.addSection({ title: "Results" });
     [td("Climatology"), td(f3(o.clim.rmse)), td(f3(o.clim.bias)), td(f3(o.clim.r))],
     [td("ML model (never saw ARGO)", { bold: true, color: HEX.accent2 }), td(f3(o.pred.rmse), { bold: true, color: HEX.accent2 }), td(f3(o.pred.bias), { bold: true, color: HEX.accent2 }), td(f3(o.pred.r), { bold: true, color: HEX.accent2 })],
     [td("GLORYS (assimilates ARGO, so it is the ceiling)"), td(f3(o.glorys.rmse)), td(f3(o.glorys.bias)), td(f3(o.glorys.r))]];
-  s.addTable(zebra(rows), { x: M, y: 1.2, w: 6.2, colW: [3.2, 1.0, 1.0, 1.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.4, margin: 0.05 });
+  s.addTable(zebra(rows), { x: M, y: 1.2, w: 6.2, colW: [3.2, 1.0, 1.0, 1.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.4, margin: 0.05 });
   const ir = [[th("Indicator (vs GLORYS)"), th("ML error"), th("Climatology")]].concat([["D20", "D20 thermocline depth", "m"], ["TCHP", "TCHP heat potential", "kJ cm⁻²"], ["OHC300", "Heat content 0–300 m", "GJ m⁻²"]].map(([k, lab, u]) =>
     [td(lab), td(`${f2(IND[k].model_vs_glorys.rmse)} ${u}`, { bold: true }), td(`${f2(IND[k].clim_vs_glorys.rmse)} ${u}`)]));
-  s.addTable(zebra(ir), { x: 6.95, y: 1.2, w: 5.88, colW: [2.6, 1.64, 1.64], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.4, margin: 0.05 });
+  s.addTable(zebra(ir), { x: 6.95, y: 1.2, w: 5.88, colW: [2.6, 1.64, 1.64], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.4, margin: 0.05 });
   s.addText(`${AR.n_matchups_cell_days.toLocaleString("en-US")} ARGO profiles from ${AR.n_floats} floats on test days, never used for training; converted to potential temperature (TEOS-10). The model closes ${Math.round(100 * (o.clim.rmse - o.pred.rmse) / (o.clim.rmse - o.glorys.rmse))}% of the gap between climatology and GLORYS, and halves the climatology's indicator errors.`,
     { x: M, y: 2.95, w: W - 2 * M, h: 0.6, fontSize: 13, color: C.text1, margin: 0, isTextBox: true });
   fitImage(s, FIG("phase6/04_argo_validation.png"), M, 3.6, W - 2 * M, 3.3, "ARGO validation figure");
   s.addNotes("ARGO floats are real in-situ measurements that were never used for training, tuning or selection, so this is the strongest evidence against leakage. Caveat: GLORYS assimilates ARGO, so ARGO is independent of our model but not of the training target. Near the surface our model is even slightly closer to ARGO than GLORYS.");
+}
+
+// ================================================================ Slide 10b: realism checks
+{
+  const s = content("Results");
+  s.addText("Realism checks: harder tests and confidence intervals", { placeholder: "title" });
+  const S = AU.B_stricter_tests.setups, CLS = AU.B_stricter_tests.classification;
+  const nm = { A_main_month_holdout: "Main test: whole months held out", B1_temporal_train_JanJun_test_AugNov: "Unseen months ahead (train Jan–Jun → test Aug, Nov)", B2_spatial_unseen_regions: "Unseen regions (25% of 5° blocks held out)", B3_temporal_and_spatial: "Unseen months AND unseen regions (hardest)" };
+  const rows = [[th("Regression test setup"), th("RMSE °C"), th("Climatology °C"), th("Skill"), th("RMSE 100 m")]].concat(Object.keys(nm).map((k) =>
+    [td(nm[k], k.startsWith("B3") ? { bold: true } : {}), td(f3(S[k].rmse)), td(f3(S[k].rmse_clim)), td(f2(S[k].mean_skill)), td(f2(S[k].rmse_100m))]));
+  s.addTable(zebra(rows), { x: M, y: 1.2, w: 8.0, colW: [4.4, 0.9, 1.15, 0.7, 0.85], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.45, margin: 0.05 });
+  const crow = [[th("Classifier (TCHP ≥ 60)"), th("Main"), th("Unseen regions"), th("Hardest")]].concat([["Logistic Regression (L1)", "logistic_l1"], ["Gradient Boosting", "gradient_boosting"], ["Climatology rule", "climatology_rule"]].map(([l, k]) =>
+    [td(l), td(f3(CLS.main[k].accuracy)), td(f3(CLS.B2_spatial[k].accuracy)), td(f3(CLS.B3_temporal_and_spatial[k].accuracy))]));
+  s.addTable(zebra(crow), { x: M, y: 3.75, w: 8.0, colW: [3.5, 1.5, 1.5, 1.5], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.42, margin: 0.05 });
+  s.addText("Accuracy on each test setup.", { x: M, y: 5.5, w: 8, h: 0.3, fontSize: 10, color: C.accent5, margin: 0, isTextBox: true });
+  const bs = AU.C_bootstrap;
+  card(s, 8.85, 1.2, 3.98, 2.35, "bootstrap card");
+  s.addText([
+    { text: "Bootstrap 95% CI (resampling test days)", options: { bold: true, breakLine: true } },
+    { text: `RMSE ${f3(bs.rmse.estimate)} °C [${f3(bs.rmse.ci95[0])}, ${f3(bs.rmse.ci95[1])}]`, options: { breakLine: true } },
+    { text: `Pooled skill ${f2(bs.pooled_skill.estimate)} [${f2(bs.pooled_skill.ci95[0])}, ${f2(bs.pooled_skill.ci95[1])}]`, options: { breakLine: true } },
+    { text: `Classifier accuracy ${f3(bs.classification_accuracy_logistic_l1.estimate)} [${f3(bs.classification_accuracy_logistic_l1.ci95[0])}, ${f3(bs.classification_accuracy_logistic_l1.ci95[1])}]` },
+  ], { x: 9.05, y: 1.35, w: 3.6, h: 2.1, fontSize: 13, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 6, isTextBox: true });
+  card(s, 8.85, 3.75, 3.98, 2.9, "honest reading card");
+  s.addText([
+    { text: "Honest reading", options: { bold: true, breakLine: true } },
+    { text: "Errors grow for months ahead and unseen regions, but stay below climatology. The main test is optimistic: neighbouring months share the same 2021 ocean state.", options: { breakLine: true } },
+    { text: `Classifier: near the threshold (±10 kJ cm⁻², 16% of rows) accuracy is only ${(100 * AU.D_classification_by_distance_to_threshold.bands["within 10 of threshold"].model_accuracy).toFixed(0)}%.`, options: {} },
+  ], { x: 9.05, y: 3.9, w: 3.6, h: 2.65, fontSize: 12, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 6, isTextBox: true });
+  s.addNotes("This slide answers the question: are the numbers too good to be true? The main split holds out whole months, but the model still sees the months either side. Training only on January–June and testing on August and November, or holding out whole ocean regions, gives the realistic error. The confidence intervals come from a bootstrap over test days (handout topic: bootstrap and confidence intervals).");
 }
 
 // ================================================================ Slide 11: demo screenshots
@@ -369,9 +407,9 @@ pres.addSection({ title: "Demonstration" });
   const s = content("Demonstration");
   s.addText("Team responsibility and self-contribution matrix", { placeholder: "title" });
   const acts = ["Data acquisition and harmonisation", "Data preprocessing and EDA", "Feature engineering", "Model building", "Model comparisons", "Ensemble", "Hyperparameter tuning / cross-validation", "Classification and regularization", "ARGO validation and indicators", "Presentation / interface UI", "Documentation"];
-  const rows = [[th("Activity"), th("Aryan Bhutani"), th("<Member 2>"), th("<Member 3>"), th("<Member 4>")]].concat(acts.map((a) => [td(a), td(""), td(""), td(""), td("")]));
-  s.addTable(zebra(rows), { x: M, y: 1.2, w: W - 2 * M, colW: [4.33, 2.0, 2.0, 2.0, 2.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: HEX.accent4 }, rowH: 0.45, margin: 0.06 });
-  s.addNotes("Fill in each member's name and their contribution in every row (e.g. Lead / Support / tick).");
+  const rows = [[th("Activity"), th("Tanmay Sangwan"), th("Tanmay Kandwal"), th("Aryan Bhutani"), th("Prashast")]].concat(acts.map((a) => [td(a), td(""), td(""), td(""), td("")]));
+  s.addTable(zebra(rows), { x: M, y: 1.2, w: W - 2 * M, colW: [4.33, 2.0, 2.0, 2.0, 2.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.45, margin: 0.06 });
+  s.addNotes("Each member's contribution per activity.");
 }
 
 // ================================================================ Slide 13: conclusions
@@ -393,10 +431,10 @@ pres.addSection({ title: "Conclusion" });
     s.addText(l, { x: x + 0.2, y: 2.35, w: 2.55, h: 0.95, fontSize: 12, color: C.background1, margin: 0, valign: "top", isTextBox: true });
   });
   s.addText([
-    { text: "Carefully engineered classical ML reconstructs the subsurface well from surface data: tree ensembles win, and sea level is the key thermocline signal.", options: { bullet: true, breakLine: true } },
+    { text: "Carefully engineered machine learning reconstructs the subsurface well from surface data: tree ensembles win, and sea level is the key thermocline signal.", options: { bullet: true, breakLine: true } },
     { text: "Leakage-free design (whole-month split, CV-only decisions) and independent ARGO validation make the results defensible.", options: { bullet: true, breakLine: true } },
     { text: "Limitations: one year of data; GLORYS as truth assimilates ARGO; predictions are smoother than reality; the model relies on location.", options: { bullet: true, breakLine: true } },
-    { text: "Future work: multi-year training, spatial-holdout tests, uncertainty estimates, and comparison with the deep-learning reference.", options: { bullet: true } },
+    { text: `Realistic performance: under the strictest test (unseen months and unseen regions) RMSE rises to ${f2(AU.B_stricter_tests.setups.B3_temporal_and_spatial.rmse)} °C, still better than climatology (${f2(AU.B_stricter_tests.setups.B3_temporal_and_spatial.rmse_clim)} °C). Future work: multi-year training and regime clustering.`, options: { bullet: true } },
   ], { x: M, y: 3.8, w: 12.3, h: 3.0, fontSize: 17, color: C.background1, margin: 0, valign: "top", paraSpaceAfter: 10, isTextBox: true });
   s.addNotes("Close on the four headline numbers and state the limitations openly.");
 }
@@ -405,23 +443,9 @@ pres.addSection({ title: "Conclusion" });
 {
   const s = content("Conclusion");
   s.addText("References", { placeholder: "title" });
-  const refs = [
-    "Ali, M.M., Swain, D., Weller, R.A. (2004). Estimation of ocean subsurface thermal structure from surface parameters: a neural network approach. Geophys. Res. Lett., 31, L20308.",
-    "Guinehut, S., Dhomps, A.-L., Larnicol, G., Le Traon, P.-Y. (2012). High resolution 3-D temperature and salinity fields derived from in situ and satellite observations. Ocean Science, 8, 845–857.",
-    "Su, H., Wu, X., Yan, X.-H., Kidwell, A. (2015). Estimation of subsurface temperature anomaly in the Indian Ocean during recent global surface warming hiatus from satellite measurements: a support vector machine approach. Remote Sens. Environ., 160, 63–71.",
-    "Su, H., Li, W., Yan, X.-H. (2018). Retrieving temperature anomaly in the global subsurface and deeper ocean from satellite observations. J. Geophys. Res. Oceans, 123, 399–410.",
-    "Lellouche, J.-M. et al. (2021). The Copernicus global 1/12° oceanic and sea ice GLORYS12 reanalysis. Front. Earth Sci., 9, 698876.",
-    "Good, S. et al. (2020). The current configuration of the OSTIA system for operational production of foundation SST and ice concentration analyses. Remote Sensing, 12(4), 720.",
-    "Copernicus Marine Service products: GLOBAL_MULTIYEAR_PHY_ENS_001_031, GLOBAL_MULTIYEAR_PHY_001_030, SST_GLO_SST_L4_REP_OBSERVATIONS_010_011, MULTIOBS_GLO_PHY_S_SURFACE_MYNRT_015_013, SEALEVEL_GLO_PHY_L4_MY_008_047, WIND_GLO_PHY_L4_MY_012_006.",
-    "Argo (2000). Argo float data and metadata from the Global Data Assembly Centre (Argo GDAC). SEANOE. doi:10.17882/42182.",
-    "Knapp, K.R. et al. (2010). The International Best Track Archive for Climate Stewardship (IBTrACS). Bull. Amer. Meteor. Soc., 91, 363–376.",
-    "Leipper, D.F., Volgenau, D. (1972). Hurricane heat potential of the Gulf of Mexico. J. Phys. Oceanogr., 2, 218–224.",
-    "Large, W.G., Pond, S. (1981). Open ocean momentum flux measurements in moderate to strong winds. J. Phys. Oceanogr., 11, 324–336.",
-    "Pedregosa, F. et al. (2011). Scikit-learn: machine learning in Python. J. Mach. Learn. Res., 12, 2825–2830.",
-    "SIH26066 problem statement (INCOIS); OceanEmbed reference repository: github.com/AshmanRaut/OceanEmbed. Project code: github.com/Aryanbhutani14/Oceantemperatures.",
-  ];
+  const refs = REFS;
   s.addText(refs.map((t, i) => ({ text: t, options: { breakLine: i < refs.length - 1 } })),
-    { x: M, y: 1.2, w: W - 2 * M, h: 5.7, fontSize: 12, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 6, isTextBox: true });
+    { x: M, y: 1.1, w: W - 2 * M, h: 5.85, fontSize: 10, color: C.text1, margin: 0, valign: "top", paraSpaceAfter: 2, isTextBox: true });
 }
 
 (async () => {

@@ -5,8 +5,13 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
 ## What and why
 
 - **Project:** OceanEmbed-ML. Reconstruct subsurface ocean temperature at 15 depths (0–1000 m) from satellite surface data over the North Indian Ocean.
-- **Origin:** SIH 2026 problem statement SIH26066 (INCOIS / Ministry of Earth Sciences). The problem statement asks for deep learning; **we deliberately use classical ML only (no neural networks)**.
+- **Origin:** personal CSE2032 course project, aligned with a problem statement published by INCOIS (Ministry of Earth Sciences).
+- **Owner's rules (2026-11-17):**
+  - Framing: a CSE2032 course project aligned with an INCOIS (Ministry of Earth Sciences) problem statement. Nothing else about its origin is mentioned anywhere.
+  - Stay within the CSE2032 handout; anything beyond it needs a stated reason.
+  - Results must be realistic and honestly framed (no inflated headline numbers).
 - **Context:** end-semester project for **CSE2032 Machine Learning** at BMU (2026-27).
+- **Team:** Tanmay Sangwan (240669), Tanmay Kandwal (240670), Aryan Bhutani (240406), Prashast (240586).
   - Grading: report + code + notebooks + presentation, demo and viva.
   - **Keep models close to the syllabus:** Linear Regression (+ gradient descent from scratch), Ridge, Lasso, Logistic Regression, SVM/SVR, Decision Tree, KNN, Random Forest, Bagging, Boosting, K-Means/DBSCAN/BIRCH, PCA/Kernel PCA, cross-validation, bootstrap, R². "Slightly more" is OK (e.g. XGBoost, ElasticNet).
 - **Deadline:** submission on **2026-11-18**. Only one year of data (2021) is used for that reason.
@@ -185,3 +190,17 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
 - Demo slide uses real pipeline outputs. Swap in dashboard screenshots once the dashboard exists.
 - The Word table of contents was refreshed through Word COM; rebuild the docx, then update fields in Word.
 - **Owner's decision:** the report and PPT files (`reports/*.pptx`, `*.docx`, `*.pdf`) stay local only and are git-ignored. Never commit or push them.
+
+## Validation audit (2026-11-17), `results/validation/audit.json`
+
+- **Data integrity:** all checks pass (exact match to raw GLORYS; SST within 0.008 °C; no duplicates; no feature with |r| > 0.95).
+- **Harder tests, RMSE (skill):**
+  - main 0.579 (0.64)
+  - unseen regions 0.703 (0.53)
+  - months ahead 0.801 (0.37)
+  - both 0.869 (0.33)
+  - **Realistic expectation: 0.8–0.9 °C.**
+- **Classifier:** 93% overall, but 67% within ±10 kJ/cm² of the threshold.
+- **Bootstrap CIs:** RMSE [0.573, 0.585]; accuracy [0.923, 0.929].
+- **Deliverables restyled:** neutral black/grey report, navy/grey slides; 10-paper literature review; syllabus-alignment table (report §5.12); new realism slide.
+- **PPT file:** the user had the old PPT open, so the new one is `reports/OceanEmbed_ML_Presentation_v2.pptx`.

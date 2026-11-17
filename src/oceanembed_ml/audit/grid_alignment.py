@@ -9,7 +9,7 @@ Pure computation on the audited catalogue metadata (no network):
        canonical cells (edges coincide)        -> block mean (= conservative)
      * otherwise                               -> area-weighted conservative
                                                   (finer) / bilinear (same res)
-2. For GLORYS, list the native levels that bracket the 15 PS depths.
+2. For GLORYS, list the native levels that bracket the 15 standard depths.
 3. Estimate uncompressed download volume for the bbox (+pad) and period.
 
 Writes data/audit/grid_alignment.json and prints a summary table.

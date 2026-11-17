@@ -1,0 +1,87 @@
+[audit] A. data integrity ...
+{
+ "train_rows": 2245320,
+ "train_days": 189,
+ "train_rows_equal_days_x_ocean_cells": true,
+ "train_duplicate_keys": 0,
+ "train_months": [
+  1,
+  3,
+  4,
+  6,
+  7,
+  9,
+  10,
+  12
+ ],
+ "test_rows": 1425600,
+ "test_days": 120,
+ "test_rows_equal_days_x_ocean_cells": true,
+ "test_duplicate_keys": 0,
+ "test_months": [
+  2,
+  5,
+  8,
+  11
+ ],
+ "min_gap_days_train_test": 8,
+ "target_range_C": [
+  5.998011112213135,
+  35.68485641479492
+ ],
+ "mean_profile_monotonic_cooling": true,
+ "pct_profiles_with_inversion_gt_0p5C_below_200m": 0.22519983603197374,
+ "spotcheck_target_vs_raw_glorys_max_abs_diff_C": 0.0,
+ "spotcheck_sst_vs_raw_ostia_mean_abs_diff_C": 0.007642983137280475,
+ "spotcheck_sst_n": 24,
+ "strongest_single_feature_vs_anomaly": {
+  "0": {
+   "feature": "sst_anom",
+   "abs_r": 0.7783449000280168
+  },
+  "100": {
+   "feature": "sla_mean7",
+   "abs_r": 0.5410143143720452
+  },
+  "500": {
+   "feature": "lon",
+   "abs_r": 0.26358568264688675
+  }
+ },
+ "any_feature_abs_r_gt_0p95": false
+}
+[audit] C. bootstrap ...
+{
+ "method": "block bootstrap over 120 test days, 1000 resamples",
+ "rmse": {
+  "estimate": 0.5789751689646023,
+  "ci95": [
+   0.5734219442658167,
+   0.5851421586440663
+  ]
+ },
+ "pooled_skill": {
+  "estimate": 0.6656023263931274,
+  "ci95": [
+   0.6570069193840027,
+   0.674778401851654
+  ]
+ },
+ "classification_accuracy_logistic_l1": {
+  "estimate": 0.92617,
+  "ci95": [
+   0.9228021565227897,
+   0.9293487242632935
+  ]
+ }
+}
+[audit] B. stricter generalisation tests ...
+  A_main_month_holdout                     RMSE=0.579 skill=0.635 clim=1.002
+  B1_temporal_train_JanJun_test_AugNov     RMSE=0.801 skill=0.373 clim=1.019
+  B2_spatial_unseen_regions                RMSE=0.703 skill=0.525 clim=1.138
+  B3_temporal_and_spatial                  RMSE=0.869 skill=0.327 clim=1.155
+  B2 without lat/lon                       RMSE=0.733 skill=0.486
+  clf main                         logistic acc=0.928 GB acc=0.938 rule acc=0.825
+  clf B2_spatial                   logistic acc=0.931 GB acc=0.943 rule acc=0.835
+  clf B3_temporal_and_spatial      logistic acc=0.951 GB acc=0.929 rule acc=0.863
+[audit] wrote results/validation/audit.json

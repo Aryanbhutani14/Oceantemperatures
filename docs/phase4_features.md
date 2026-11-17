@@ -16,13 +16,13 @@ Features are computed **on the 0.25° grid first**, so that spatial features (gr
 | kinematic (2) | wind_speed, current_speed | Wind mixing deepens the mixed layer; advection |
 | wind forcing (4) | taux, tauy (bulk stress, Large & Pond Cd), curl_tau, **ekman_w** = curl(τ/f)/ρ₀ (m/day) | Ekman upwelling and downwelling lift or depress the thermocline (Somali, Oman, Sri Lanka dome) |
 | gradients (5) | \|∇SST\|, ∂SLA/∂x, ∂SLA/∂y, \|∇SLA\|, ∇²SLA | Fronts, geostrophic slope, eddy curvature (cyclonic eddies lift isotherms) |
-| neighbourhood (3) | 5×5 (1.25°) NaN-aware means of SLA, SST, SSS | Classical stand-in for a CNN's receptive field |
+| neighbourhood (3) | 5×5 (1.25°) NaN-aware means of SLA, SST, SSS | Spatial context around each cell |
 | temporal (5) | 7-day **trailing** means of SLA, SST and Ekman pumping; 7-day change in SLA and SST | The subsurface responds to forcing with a lag |
 | anomaly (1) | sst_anom = SST − external climatology (0 m) | Matches the anomaly target |
 | geographic (2) | lat, lon | Regional regime. sin/cos of lon are not used: a 60° span has no wrap-around. |
 | seasonal (2) | sin(2π·doy/365.25), cos(…) | Seasonal cycle without a Dec/Jan jump |
 | static (1) | bottom_depth (deepest valid standard depth) | Shelf vs open ocean |
-| **embedding (8)** | PCA of standardised **3×3 × 7-variable surface patches** (63 → 8 dims) | **Classical "satellite embedding"**, answering the problem statement's embedding deliverable without neural networks. 8 components explain **95.2%** of the patch variance. |
+| **embedding (8)** | PCA of standardised **3×3 × 7-variable surface patches** (63 → 8 dims) | **Compact surface summary (PCA)**: dimension reduction of the local surface pattern, a syllabus method. 8 components explain **95.2%** of the patch variance. |
 
 **Per depth,** the table also holds `clim_dXX` (external climatology), `y_dXX` (absolute temperature) and **`a_dXX` = y − clim** (the anomaly, primary target, decision D-018).
 

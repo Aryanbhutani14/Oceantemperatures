@@ -69,7 +69,7 @@ The ML model **halves the climatology's error** for D20, TCHP and OHC300.
 **Cyclones (fig 03):**
 - **Tauktae** (Arabian Sea, 14 May 2021): the prediction shows the high-TCHP band along the track.
 - **Yaas** (Bay of Bengal, 24 May 2021): the prediction shows the warm eddies.
-- The climatology misses both, which is directly relevant to the problem statement's Disaster Management theme.
+- The climatology misses both, which is directly relevant to cyclone forecasting and disaster management.
 
 **Limits:**
 - The 15 standard depths limit MLD precision (levels are 10–20 m apart near the base of the mixed layer).

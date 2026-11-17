@@ -5,7 +5,7 @@ Pipeline per source (docs/phase2_harmonisation.md):
   4 coordinates sorted ascending, longitudes in [-180,180)
   5 spatial: ConservativeRegridder (identity / exact block mean / area-weighted)
   6 temporal: UTC calendar day (hourly -> daily mean, all 24 hours required)
-  7 vertical (3-D only): linear interpolation to the 15 PS depths, no extrapolation
+  7 vertical (3-D only): linear interpolation to the 15 standard depths, no extrapolation
   8 land/lake masking with the canonical ocean mask (from the target)
   9 physical range QC: impossible values -> NaN, counted (never silent)
 Output: data/interim/<source>.nc (float32, zlib) + data/audit/harmonisation_qc.json
