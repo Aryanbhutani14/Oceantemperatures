@@ -315,7 +315,7 @@ pres.addSection({ title: "Results" });
 {
   const s = content("Results", "Results: classification of cyclone-favourable ocean");
   const order = ["climatology_rule", "decision_tree", "knn", "logistic_l2", "logistic_l1", "svm_rbf", "random_forest", "gradient_boosting"];
-  const nm = { majority_class: "Majority class", climatology_rule: "Climatology rule (baseline)", decision_tree: "Decision Tree", knn: "KNN", logistic_l2: "Logistic Regression (L2)", logistic_l1: "Logistic Regression (L1) ✓", svm_rbf: "SVM (RBF)", random_forest: "Random Forest", gradient_boosting: "Gradient Boosting" };
+  const nm = { majority_class: "Majority class", climatology_rule: "Climatology rule (baseline)", decision_tree: "Decision Tree", knn: "KNN", logistic_l2: "Logistic Regression (L2)", logistic_l1: "Logistic Regression (L1) (selected)", svm_rbf: "SVM (RBF)", random_forest: "Random Forest", gradient_boosting: "Gradient Boosting" };
   const short = { climatology_rule: "Baseline", decision_tree: "Tree", knn: "KNN", logistic_l2: "LogReg L2", logistic_l1: "LogReg L1", svm_rbf: "SVM", random_forest: "Random Forest", gradient_boosting: "Boosting" };
   const v = (x) => (x == null ? "—" : f3(x));
   const rows = [[th("Model"), th("Accuracy"), th("Precision"), th("Recall"), th("F1 score"), th("ROC-AUC")]].concat(["majority_class", ...order].map((n) => {
@@ -331,7 +331,7 @@ pres.addSection({ title: "Results" });
     `Task: is heat potential ≥ 60 kJ cm⁻²? ${Math.round(CL.positive_rate.test_eval * 100)}% of 100,000 test rows are "yes"`,
     `The baseline misses a third of dangerous areas (recall ${f2(CL.models.climatology_rule.recall)}); our models catch about 93%`,
   ], 7.05, 5.6, 5.75, 1.35, 13, "clf takeaways");
-  s.addNotes(`Logistic regression with L1 regularization (✓) had the best cross-validated ROC-AUC and was selected. Gradient boosting is about one point more accurate on test (${f3(CL.models.gradient_boosting.accuracy)}). Recall matters most: a missed favourable area is the costly mistake for a cyclone warning.`);
+  s.addNotes(`Logistic regression with L1 regularization (selected) had the best cross-validated ROC-AUC and was selected. Gradient boosting is about one point more accurate on test (${f3(CL.models.gradient_boosting.accuracy)}). Recall matters most: a missed favourable area is the costly mistake for a cyclone warning.`);
 }
 
 // ================================================================ 12. Results: confusion matrix + ROC
