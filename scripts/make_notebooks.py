@@ -221,6 +221,33 @@ display(pd.DataFrame({n: {"units": v["units"], "ML RMSE": v["model_vs_glorys"]["
 for f in ["06_indicator_scatter.png","03_cyclone_tchp.png"]:
     display(Image(filename=str(FIGURES/"phase6"/f)))"""),
 ],
+"07_classification_regularization.ipynb": [
+("md", """# 07 · Classification and regularization (Phase 7)
+**Classification task:** is an ocean location *favourable for cyclone intensification* today?
+Label = 1 if Tropical Cyclone Heat Potential **TCHP ≥ 60 kJ cm⁻²** (from the GLORYS profile), else 0, predicted from **surface satellite data only**.
+Same months / split as the regression; models tuned with **GridSearchCV + GroupKFold by month**, compared on the same 100k test rows.
+Code: `src/oceanembed_ml/classification/`, `src/oceanembed_ml/models/regularization.py`."""),
+("code", SETUP),
+("code", """C = json.loads((ROOT/"results"/"phase7"/"classification.json").read_text())
+print(C["task"]); print("positive rate:", C["positive_rate"], "| rows:", C["n_rows"], "| selected by CV:", C["selected_by_cv"])
+pd.DataFrame({n: {"topic": v["topic"], "best params": v.get("best_params"), "CV AUC": v.get("cv_auc"), "accuracy": v["accuracy"],
+                  "precision": v["precision"], "recall": v["recall"], "F1": v["f1"], "ROC-AUC": v["roc_auc"], "specificity": v["specificity"]}
+              for n, v in C["models"].items()}).T"""),
+("md", "## Hyper-parameter tuning: every grid point (cross-validated ROC-AUC)"),
+("code", """rows = [{"model": n, **t["params"], "CV AUC": t["cv_auc"], "± std": t["cv_std"]} for n, v in C["models"].items() for t in v.get("cv_trials", [])]
+pd.DataFrame(rows)"""),
+("code", """for f in ["01_roc_curves.png","02_confusion_matrices.png","03_metrics_comparison.png"]:
+    display(Image(filename=str(FIGURES/"phase7"/f)))"""),
+("md", """## Regularization: overfitting and how it is controlled (validation curves, GroupKFold by month)
+* **A/B.** A deliberately over-complex model (861 polynomial features, 2,000 rows) overfits without regularization; Ridge (L2) and Lasso (L1) fix it, and Lasso also selects features.
+* **C.** Decision-tree depth: deeper trees memorise the training data (training accuracy → 1) while CV accuracy drops.
+* **D.** Logistic regression: C = 1/λ.
+* **E.** Gradient boosting: learning rate (shrinkage) × number of trees."""),
+("code", """R = json.loads((ROOT/"results"/"phase7"/"regularization.json").read_text())
+r = R["ridge_poly"]; print(f"Ridge on 861 features: no regularization CV RMSE {r['unregularised_cv_rmse']:.3f} °C (train {r['unregularised_train_rmse']:.3f}) -> best alpha {r['best_alpha']:.3g}: CV RMSE {r['best_cv_rmse']:.3f}")
+t = R["tree_depth"]; print(f"Decision tree: best max_depth {t['best_depth']}; at depth 30 train acc {t['train_acc'][-1]:.3f} vs CV {t['cv_acc'][-1]:.3f}")
+display(Image(filename=str(FIGURES/"phase7"/"04_regularization_curves.png")))"""),
+],
 }
 
 

@@ -1,0 +1,9 @@
+[clf] building labels ...
+  logistic_l2        CV AUC=0.9773 {'C': 0.01} | TEST acc=0.927 F1=0.922 AUC=0.9830
+  logistic_l1        CV AUC=0.9780 {'C': 0.01} | TEST acc=0.926 F1=0.922 AUC=0.9828
+  svm_rbf            CV AUC=0.9740 {'C': 1} | TEST acc=0.929 F1=0.924 AUC=0.9836
+  decision_tree      CV AUC=0.9488 {'max_depth': 4, 'min_samples_leaf': 1} | TEST acc=0.904 F1=0.899 AUC=0.9468
+  knn                CV AUC=0.9572 {'n_neighbors': 41} | TEST acc=0.922 F1=0.918 AUC=0.9770
+  random_forest      CV AUC=0.9734 {'max_features': 0.2} | TEST acc=0.930 F1=0.926 AUC=0.9849
+  gradient_boosting  CV AUC=0.9740 {'l2_regularization': 0.0, 'learning_rate': 0.1, 'max_leaf_nodes': 31} | TEST acc=0.937 F1=0.932 AUC=0.9872
+[clf] selected by CV: logistic_l1

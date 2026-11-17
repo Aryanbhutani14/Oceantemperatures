@@ -1,0 +1,3 @@
+  ridge poly: OLS train 0.595 / CV 5.306  -> best alpha 3.16e+03 CV 1.246
+  lasso poly: best alpha 0.1 CV 1.242, non-zero 17 of 861
+  tree depth: best 4 CV acc 0.895; depth 30 train 1.000 vs CV 0.873

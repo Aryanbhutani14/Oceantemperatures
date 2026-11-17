@@ -1,0 +1,488 @@
+{
+ "task": "TCHP >= 60.0 kJ cm-2 (favourable for cyclone intensification)",
+ "positive_rate": {
+  "train": 0.4625284442139591,
+  "test_eval": 0.46575
+ },
+ "n_rows": {
+  "train_total": 1978434,
+  "tune": 60000,
+  "test_eval": 100000
+ },
+ "features": 41,
+ "models": {
+  "majority_class": {
+   "topic": "baseline",
+   "accuracy": 0.53425,
+   "precision": 0.0,
+   "recall": 0.0,
+   "f1": 0.0,
+   "roc_auc": NaN,
+   "specificity": 1.0,
+   "confusion_matrix": {
+    "tn": 53425,
+    "fp": 0,
+    "fn": 46575,
+    "tp": 0
+   }
+  },
+  "climatology_rule": {
+   "topic": "baseline (clim TCHP >= 60)",
+   "accuracy": 0.82119,
+   "precision": 0.9343101047405703,
+   "recall": 0.6626731078904992,
+   "f1": 0.7753897172430253,
+   "roc_auc": NaN,
+   "specificity": 0.9593823116518484,
+   "confusion_matrix": {
+    "tn": 51255,
+    "fp": 2170,
+    "fn": 15711,
+    "tp": 30864
+   }
+  },
+  "logistic_l2": {
+   "topic": "Logistic Regression (L2)",
+   "best_params": {
+    "C": 0.01
+   },
+   "cv_auc": 0.9773314601369496,
+   "cv_trials": [
+    {
+     "params": {
+      "C": 0.001
+     },
+     "cv_auc": 0.9752604670239828,
+     "cv_std": 0.009702032064559173
+    },
+    {
+     "params": {
+      "C": 0.01
+     },
+     "cv_auc": 0.9773314601369496,
+     "cv_std": 0.007492284448403225
+    },
+    {
+     "params": {
+      "C": 0.1
+     },
+     "cv_auc": 0.9772758630545834,
+     "cv_std": 0.0068725264058117404
+    },
+    {
+     "params": {
+      "C": 1
+     },
+     "cv_auc": 0.9773034937354025,
+     "cv_std": 0.0065334080742483125
+    },
+    {
+     "params": {
+      "C": 10
+     },
+     "cv_auc": 0.977263638083431,
+     "cv_std": 0.006557541078308794
+    }
+   ],
+   "n_train_rows": 300000,
+   "fit_seconds": 1.8,
+   "tune_seconds": 6.3,
+   "accuracy": 0.92659,
+   "precision": 0.9084662474492983,
+   "recall": 0.9367686527106817,
+   "f1": 0.9224003974588006,
+   "roc_auc": 0.98302418101336,
+   "specificity": 0.9177164248947122,
+   "confusion_matrix": {
+    "tn": 49029,
+    "fp": 4396,
+    "fn": 2945,
+    "tp": 43630
+   }
+  },
+  "logistic_l1": {
+   "topic": "Logistic Regression (L1 / Lasso-style)",
+   "best_params": {
+    "C": 0.01
+   },
+   "cv_auc": 0.9779983296106978,
+   "cv_trials": [
+    {
+     "params": {
+      "C": 0.001
+     },
+     "cv_auc": 0.9735403196594647,
+     "cv_std": 0.0067846400257597665
+    },
+    {
+     "params": {
+      "C": 0.01
+     },
+     "cv_auc": 0.9779983296106978,
+     "cv_std": 0.005609400385035611
+    },
+    {
+     "params": {
+      "C": 0.1
+     },
+     "cv_auc": 0.9776184283674472,
+     "cv_std": 0.006148766836239584
+    },
+    {
+     "params": {
+      "C": 1
+     },
+     "cv_auc": 0.9773437492606043,
+     "cv_std": 0.006476285394348137
+    }
+   ],
+   "n_train_rows": 300000,
+   "fit_seconds": 7.2,
+   "tune_seconds": 10.1,
+   "accuracy": 0.92617,
+   "precision": 0.9083861287095698,
+   "recall": 0.9358668813741278,
+   "f1": 0.9219217631320128,
+   "roc_auc": 0.9827594116493116,
+   "specificity": 0.9177164248947122,
+   "confusion_matrix": {
+    "tn": 49029,
+    "fp": 4396,
+    "fn": 2987,
+    "tp": 43588
+   }
+  },
+  "svm_rbf": {
+   "topic": "SVM (RBF kernel)",
+   "best_params": {
+    "C": 1
+   },
+   "cv_auc": 0.9739798747442194,
+   "cv_trials": [
+    {
+     "params": {
+      "C": 0.3
+     },
+     "cv_auc": 0.9733237147714656,
+     "cv_std": 0.0037839202504820076
+    },
+    {
+     "params": {
+      "C": 1
+     },
+     "cv_auc": 0.9739798747442194,
+     "cv_std": 0.0032003525700674395
+    },
+    {
+     "params": {
+      "C": 3
+     },
+     "cv_auc": 0.9724209839263316,
+     "cv_std": 0.005153821998692913
+    }
+   ],
+   "n_train_rows": 8000,
+   "fit_seconds": 0.6,
+   "tune_seconds": 21.1,
+   "accuracy": 0.92852,
+   "precision": 0.920142366957226,
+   "recall": 0.9269779924852388,
+   "f1": 0.9235475314451955,
+   "roc_auc": 0.9835792863061701,
+   "specificity": 0.9298642957416939,
+   "confusion_matrix": {
+    "tn": 49678,
+    "fp": 3747,
+    "fn": 3401,
+    "tp": 43174
+   }
+  },
+  "decision_tree": {
+   "topic": "Decision Tree",
+   "best_params": {
+    "max_depth": 4,
+    "min_samples_leaf": 1
+   },
+   "cv_auc": 0.9487904631179055,
+   "cv_trials": [
+    {
+     "params": {
+      "max_depth": 4,
+      "min_samples_leaf": 1
+     },
+     "cv_auc": 0.9487904631179055,
+     "cv_std": 0.0072573636898033015
+    },
+    {
+     "params": {
+      "max_depth": 4,
+      "min_samples_leaf": 20
+     },
+     "cv_auc": 0.9487904631179055,
+     "cv_std": 0.0072573636898033015
+    },
+    {
+     "params": {
+      "max_depth": 8,
+      "min_samples_leaf": 1
+     },
+     "cv_auc": 0.9242397929427408,
+     "cv_std": 0.03103850774269584
+    },
+    {
+     "params": {
+      "max_depth": 8,
+      "min_samples_leaf": 20
+     },
+     "cv_auc": 0.9326825310554622,
+     "cv_std": 0.02665193291795116
+    },
+    {
+     "params": {
+      "max_depth": 12,
+      "min_samples_leaf": 1
+     },
+     "cv_auc": 0.8150685497392551,
+     "cv_std": 0.05728661116232727
+    },
+    {
+     "params": {
+      "max_depth": 12,
+      "min_samples_leaf": 20
+     },
+     "cv_auc": 0.9189370317794882,
+     "cv_std": 0.03435396155466499
+    },
+    {
+     "params": {
+      "max_depth": 16,
+      "min_samples_leaf": 1
+     },
+     "cv_auc": 0.800159413510506,
+     "cv_std": 0.07000214091865961
+    },
+    {
+     "params": {
+      "max_depth": 16,
+      "min_samples_leaf": 20
+     },
+     "cv_auc": 0.9130858701666147,
+     "cv_std": 0.04868805584859618
+    },
+    {
+     "params": {
+      "max_depth": 24,
+      "min_samples_leaf": 1
+     },
+     "cv_auc": 0.8382157914106845,
+     "cv_std": 0.04587666908635065
+    },
+    {
+     "params": {
+      "max_depth": 24,
+      "min_samples_leaf": 20
+     },
+     "cv_auc": 0.9190133238260075,
+     "cv_std": 0.045715296039466884
+    }
+   ],
+   "n_train_rows": 300000,
+   "fit_seconds": 7.3,
+   "tune_seconds": 9.7,
+   "accuracy": 0.90426,
+   "precision": 0.8805512701840995,
+   "recall": 0.9191196994095545,
+   "f1": 0.8994222082151486,
+   "roc_auc": 0.9468239402335609,
+   "specificity": 0.8913055685540477,
+   "confusion_matrix": {
+    "tn": 47618,
+    "fp": 5807,
+    "fn": 3767,
+    "tp": 42808
+   }
+  },
+  "knn": {
+   "topic": "KNN",
+   "best_params": {
+    "n_neighbors": 41
+   },
+   "cv_auc": 0.9571829314852947,
+   "cv_trials": [
+    {
+     "params": {
+      "n_neighbors": 5
+     },
+     "cv_auc": 0.9358443247390211,
+     "cv_std": 0.033719812866208995
+    },
+    {
+     "params": {
+      "n_neighbors": 15
+     },
+     "cv_auc": 0.9516788217023332,
+     "cv_std": 0.03017991585543862
+    },
+    {
+     "params": {
+      "n_neighbors": 41
+     },
+     "cv_auc": 0.9571829314852947,
+     "cv_std": 0.028537226545385905
+    }
+   ],
+   "n_train_rows": 100000,
+   "fit_seconds": 0.3,
+   "tune_seconds": 22.5,
+   "accuracy": 0.92205,
+   "precision": 0.901782014090344,
+   "recall": 0.9344068706387547,
+   "f1": 0.9178046080033743,
+   "roc_auc": 0.9770191296109169,
+   "specificity": 0.91127749181095,
+   "confusion_matrix": {
+    "tn": 48685,
+    "fp": 4740,
+    "fn": 3055,
+    "tp": 43520
+   }
+  },
+  "random_forest": {
+   "topic": "Random Forest (bagging ensemble)",
+   "best_params": {
+    "max_features": 0.2
+   },
+   "cv_auc": 0.9733573165342202,
+   "cv_trials": [
+    {
+     "params": {
+      "max_features": 0.2
+     },
+     "cv_auc": 0.9733573165342202,
+     "cv_std": 0.011985507167577975
+    },
+    {
+     "params": {
+      "max_features": 0.5
+     },
+     "cv_auc": 0.9700692785866804,
+     "cv_std": 0.011030229309429653
+    }
+   ],
+   "n_train_rows": 300000,
+   "fit_seconds": 33.7,
+   "tune_seconds": 50.3,
+   "accuracy": 0.9305,
+   "precision": 0.9200500349820849,
+   "recall": 0.9317444981213097,
+   "f1": 0.9258603400823537,
+   "roc_auc": 0.9848665667478225,
+   "specificity": 0.9294150678521291,
+   "confusion_matrix": {
+    "tn": 49654,
+    "fp": 3771,
+    "fn": 3179,
+    "tp": 43396
+   }
+  },
+  "gradient_boosting": {
+   "topic": "Gradient Boosting (boosting ensemble)",
+   "best_params": {
+    "l2_regularization": 0.0,
+    "learning_rate": 0.1,
+    "max_leaf_nodes": 31
+   },
+   "cv_auc": 0.9739889326919602,
+   "cv_trials": [
+    {
+     "params": {
+      "l2_regularization": 0.0,
+      "learning_rate": 0.05,
+      "max_leaf_nodes": 31
+     },
+     "cv_auc": 0.9734226891509832,
+     "cv_std": 0.0135147267443631
+    },
+    {
+     "params": {
+      "l2_regularization": 0.0,
+      "learning_rate": 0.05,
+      "max_leaf_nodes": 63
+     },
+     "cv_auc": 0.9724171824479046,
+     "cv_std": 0.014124056906643805
+    },
+    {
+     "params": {
+      "l2_regularization": 0.0,
+      "learning_rate": 0.1,
+      "max_leaf_nodes": 31
+     },
+     "cv_auc": 0.9739889326919602,
+     "cv_std": 0.012279863295008669
+    },
+    {
+     "params": {
+      "l2_regularization": 0.0,
+      "learning_rate": 0.1,
+      "max_leaf_nodes": 63
+     },
+     "cv_auc": 0.9728664457416072,
+     "cv_std": 0.014090045898831713
+    },
+    {
+     "params": {
+      "l2_regularization": 1.0,
+      "learning_rate": 0.05,
+      "max_leaf_nodes": 31
+     },
+     "cv_auc": 0.9732976311073493,
+     "cv_std": 0.013594914594634728
+    },
+    {
+     "params": {
+      "l2_regularization": 1.0,
+      "learning_rate": 0.05,
+      "max_leaf_nodes": 63
+     },
+     "cv_auc": 0.9731316098936506,
+     "cv_std": 0.013777758791925308
+    },
+    {
+     "params": {
+      "l2_regularization": 1.0,
+      "learning_rate": 0.1,
+      "max_leaf_nodes": 31
+     },
+     "cv_auc": 0.9737495421823469,
+     "cv_std": 0.013928927320352114
+    },
+    {
+     "params": {
+      "l2_regularization": 1.0,
+      "learning_rate": 0.1,
+      "max_leaf_nodes": 63
+     },
+     "cv_auc": 0.9730056123833443,
+     "cv_std": 0.014492758894975727
+    }
+   ],
+   "n_train_rows": 300000,
+   "fit_seconds": 5.5,
+   "tune_seconds": 24.5,
+   "accuracy": 0.93671,
+   "precision": 0.9305858689604999,
+   "recall": 0.9337627482555019,
+   "f1": 0.9321716018819192,
+   "roc_auc": 0.987205951526048,
+   "specificity": 0.9392793635938231,
+   "confusion_matrix": {
+    "tn": 50181,
+    "fp": 3244,
+    "fn": 3085,
+    "tp": 43490
+   }
+  }
+ },
+ "selected_by_cv": "logistic_l1"
+}

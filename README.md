@@ -18,8 +18,11 @@ We reconstruct ocean temperature at **15 depths (0–1000 m)** over the **North 
 | 3 | Data cube + EDA + outlier/cyclone check | ✅ Complete: [details](docs/phase3_eda.md) |
 | 4 | Feature engineering (40 features, PCA surface embedding) + ML tables | ✅ Complete: [details](docs/phase4_features.md) |
 | 5 | 13 models compared with CV + test; ablations; final model **RMSE 0.579 °C, skill 0.64** | ✅ Complete: [details](docs/phase5_models.md) |
-| **6** | Full test grid, **ARGO validation** (1,279 profiles), ocean indicators (D20, D26, TCHP, MLD, OHC) | ✅ **Complete**, awaiting approval: [details](docs/phase6_evaluation.md) |
-| 7 | Dashboard, report, presentation | ⏳ next |
+| 6 | Full test grid, **ARGO validation** (1,279 profiles), ocean indicators (D20, D26, TCHP, MLD, OHC) | ✅ Complete: [details](docs/phase6_evaluation.md) |
+| **7** | **Classification** (cyclone-favourable ocean, TCHP ≥ 60) + **regularization** curves | ✅ **Complete**, awaiting approval: [details](docs/phase7_classification_regularization.md) |
+| 8 | Dashboard, report, presentation | ⏳ next |
+
+**Course checklist (CSE2032, 7 required components):** see [docs/course_requirements.md](docs/course_requirements.md). All 7 are covered.
 
 ---
 
@@ -63,10 +66,11 @@ src/oceanembed_ml/        # reusable, importable package (pip install -e .)
   features/               #   Phase 4: physics features (pure functions) + table builder
   models/                 #   Phase 5: model zoo, GD-from-scratch, metrics, CV/test, ablation, final model
   evaluation/ validation/ science/   # Phase 6: full-grid prediction, ARGO validation, ocean indicators
+  classification/         #   Phase 7: TCHP >= 60 classification (6 classifiers + baselines)
   viz/                    #   figure helpers
 scripts/                  # thin CLIs, one per phase: 00_audit.py ... 05_final_model.py, make_notebooks.py
 notebooks/                # executed exploration notebooks (read outputs; no pipeline logic)
-  01_data_audit.ipynb  02_harmonisation.ipynb  03_eda.ipynb  04_features.ipynb  05_models.ipynb  06_evaluation.ipynb
+  01_data_audit.ipynb  02_harmonisation.ipynb  03_eda.ipynb  04_features.ipynb  05_models.ipynb  06_evaluation.ipynb  07_classification_regularization.ipynb
 results/phase5/           # metrics JSON of every model (committed); fitted models go to models/ (git-ignored)
 configs/                  # grid.yaml, datasets.yaml, features.yaml (single source of truth)
 tests/                    # pytest: regridding, physics features, leakage checks
@@ -106,6 +110,7 @@ Downloading needs a free [Copernicus Marine](https://data.marine.copernicus.eu) 
 .venv/Scripts/python scripts/05_final_model.py                   #          target chosen by CV + final model
 .venv/Scripts/python scripts/05_plots.py
 .venv/Scripts/python scripts/06_evaluate.py                      # Phase 6  full test grid, ARGO, indicators, figures
+.venv/Scripts/python scripts/07_classification.py                # Phase 7  classification + regularization curves
 .venv/Scripts/python scripts/make_notebooks.py                   # re-execute notebooks
 ```
 
@@ -154,6 +159,22 @@ The model closes **77%** of the gap between the climatology and GLORYS.
 | Upper-ocean heat content (0–300 m) | **0.51 GJ m⁻²** | 1.06 GJ m⁻² |
 
 ![Cyclone heat potential under Tauktae and Yaas](reports/figures/phase6/03_cyclone_tchp.png)
+
+### Classification: is the ocean favourable for cyclone intensification? (TCHP ≥ 60 kJ cm⁻², Phase 7)
+
+| Model | Accuracy | F1 | Recall | ROC-AUC |
+|---|---|---|---|---|
+| Climatology rule (baseline) | 0.821 | 0.775 | 0.663 | n/a |
+| Decision Tree | 0.904 | 0.899 | 0.919 | 0.947 |
+| KNN | 0.922 | 0.918 | 0.934 | 0.977 |
+| **Logistic Regression L1** (selected by CV) | 0.926 | 0.922 | 0.936 | 0.983 |
+| SVM (RBF) | 0.929 | 0.924 | 0.927 | 0.984 |
+| Random Forest | 0.930 | 0.926 | 0.932 | 0.985 |
+| Gradient Boosting | **0.937** | **0.932** | 0.934 | **0.987** |
+
+**Regularization:** an 861-feature model overfits (train RMSE 0.60 °C vs CV 5.31 °C). Ridge brings CV to 1.25 °C, and Lasso keeps only 17 of the 861 features.
+
+![Regularization curves](reports/figures/phase7/04_regularization_curves.png)
 
 ## Key findings
 

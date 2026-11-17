@@ -58,8 +58,9 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
 | 3 Cube + EDA | ✅ pushed | `data/processed/cube.nc`, `reports/figures/phase3/`, `docs/phase3_eda.md` |
 | 4 Features | ✅ pushed | `data/final/features/{train,test}.parquet` (2.25M / 1.43M rows, 40 features + 15×(clim, y, a)), `configs/features.yaml`, notebooks 01–04 |
 | 5 Models | ✅ done (awaiting approval) | `results/phase5/*.json`, `models/phase5/*.joblib` (git-ignored), notebook 05. **Final: GB + clim feature** (target chosen by CV, D-024) → test RMSE 0.579 °C, skill 0.636; GB anomaly-only 0.634 |
-| 6 Evaluation + ARGO | ✅ done (awaiting push) | `data/final/predictions/test_predictions.nc` (120 test days × 15 × 101 × 241: pred/glorys/clim), `test_indicators.nc`, `argo_matchups.parquet`, results/phase6 |
-| 7 Dashboard, report, PPT | ⏳ | **The owner will provide the report and PPT formats; do NOT write them before that.** Dashboard first (owner shared a ChatGPT link for inspiration). |
+| 6 Evaluation + ARGO | ✅ committed | `data/final/predictions/test_predictions.nc` (120 test days × 15 × 101 × 241: pred/glorys/clim), `test_indicators.nc`, `argo_matchups.parquet`, results/phase6 |
+| 7 Classification + regularization | ✅ done (awaiting push) | results/phase7, notebook 07, docs/phase7_*.md, docs/course_requirements.md (maps the 7 required components) |
+| 8 Dashboard, report, PPT | ⏳ | **The owner will provide the report and PPT formats; do NOT write them before that.** Dashboard first (owner shared a ChatGPT link for inspiration). |
 
 ## Key findings so far (for the report and viva)
 
@@ -149,3 +150,25 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
   - OHC300 0.51 vs 1.06 GJ/m²
 - **Cyclone figure:** Tauktae on 2021-05-14 and Yaas on 2021-05-24 (both in May, a test month).
 - **Owner's priority:** time is short, so avoid extras. Dashboard next, then the report and PPT in the owner's format.
+
+## Phase 7 (added because CSE2032 requires classification and a clear regularization demonstration)
+
+- **Task:** TCHP ≥ 60 kJ/cm² (47% positive). 40 features + clim_tchp. GridSearchCV with GroupKFold by month, scored by AUC; same 100k test rows for every model.
+- **Results (acc / F1 / AUC):**
+  - Logistic L1 (selected by CV AUC 0.978): 0.926 / 0.922 / 0.983
+  - Gradient Boosting: 0.937 / 0.932 / 0.987 (best on test)
+  - Random Forest: 0.930
+  - SVM: 0.929
+  - KNN: 0.922
+  - Decision Tree (depth 4): 0.904
+  - Climatology rule: 0.821, recall 0.663
+- **Regularization:**
+  - Poly-2 (861 features, 2k rows): OLS CV 5.31; Ridge α≈3e3 CV 1.25; Lasso α=0.1 keeps 17/861, CV 1.24.
+  - Tree depth 30: train 1.00 vs CV 0.873 (best depth 4).
+  - Boosting lr 0.3 overfits after 25 iterations.
+- **Owner's viva worry ("metrics too high"):** answer with:
+  - R² is inflated by vertical structure, so use skill vs climatology.
+  - Climatology alone gets 80% within ±1 °C; the claim is the improvement.
+  - Month-block split, buffers, past-only features, 21 tests.
+  - Independent ARGO result 0.718 vs 1.119.
+  - State the limitations (GLORYS assimilates ARGO, smoothness, lat/lon reliance, one year).
