@@ -17,9 +17,9 @@ We reconstruct ocean temperature at **15 depths (0–1000 m)** over the **North 
 | 2 | Harmonisation onto one common grid (11,880 ocean cells × 365 days × 15 depths) | ✅ Complete: [details](docs/phase2_harmonisation.md) |
 | 3 | Data cube + EDA + outlier/cyclone check | ✅ Complete: [details](docs/phase3_eda.md) |
 | 4 | Feature engineering (40 features, PCA surface embedding) + ML tables | ✅ Complete: [details](docs/phase4_features.md) |
-| **5** | 13 models compared with CV + test; ablations; final model **RMSE 0.579 °C, skill 0.64** | ✅ **Complete**, awaiting approval: [details](docs/phase5_models.md) |
-| 6 | Evaluation (per depth, region, season, cyclone) + ARGO validation | ⏳ |
-| 7 | Ocean indicators (D20, D26, TCHP, MLD) + report | ⏳ |
+| 5 | 13 models compared with CV + test; ablations; final model **RMSE 0.579 °C, skill 0.64** | ✅ Complete: [details](docs/phase5_models.md) |
+| **6** | Full test grid, **ARGO validation** (1,279 profiles), ocean indicators (D20, D26, TCHP, MLD, OHC) | ✅ **Complete**, awaiting approval: [details](docs/phase6_evaluation.md) |
+| 7 | Dashboard, report, presentation | ⏳ next |
 
 ---
 
@@ -62,10 +62,11 @@ src/oceanembed_ml/        # reusable, importable package (pip install -e .)
   eda/                    #   Phase 3: statistics/figures, outlier vs cyclone screening
   features/               #   Phase 4: physics features (pure functions) + table builder
   models/                 #   Phase 5: model zoo, GD-from-scratch, metrics, CV/test, ablation, final model
+  evaluation/ validation/ science/   # Phase 6: full-grid prediction, ARGO validation, ocean indicators
   viz/                    #   figure helpers
 scripts/                  # thin CLIs, one per phase: 00_audit.py ... 05_final_model.py, make_notebooks.py
 notebooks/                # executed exploration notebooks (read outputs; no pipeline logic)
-  01_data_audit.ipynb  02_harmonisation.ipynb  03_eda.ipynb  04_features.ipynb  05_models.ipynb
+  01_data_audit.ipynb  02_harmonisation.ipynb  03_eda.ipynb  04_features.ipynb  05_models.ipynb  06_evaluation.ipynb
 results/phase5/           # metrics JSON of every model (committed); fitted models go to models/ (git-ignored)
 configs/                  # grid.yaml, datasets.yaml, features.yaml (single source of truth)
 tests/                    # pytest: regridding, physics features, leakage checks
@@ -89,7 +90,7 @@ Downloading needs a free [Copernicus Marine](https://data.marine.copernicus.eu) 
 ## Reproduce every phase
 
 ```bash
-.venv/Scripts/python -m pytest -q                                # 16 tests: regridding, features, leakage, models
+.venv/Scripts/python -m pytest -q                                # 21 tests: regridding, features, leakage, models, indicators
 .venv/Scripts/python scripts/00_audit.py                         # Phase 0  catalogue audit (no login)
 .venv/Scripts/python scripts/01_download.py cmems --source all   # Phase 1  ~6.8 GB, resumable
 .venv/Scripts/python scripts/01_download.py argo
@@ -104,6 +105,7 @@ Downloading needs a free [Copernicus Marine](https://data.marine.copernicus.eu) 
 .venv/Scripts/python scripts/05_ablation.py                      #          feature/target/data-size ablations
 .venv/Scripts/python scripts/05_final_model.py                   #          target chosen by CV + final model
 .venv/Scripts/python scripts/05_plots.py
+.venv/Scripts/python scripts/06_evaluate.py                      # Phase 6  full test grid, ARGO, indicators, figures
 .venv/Scripts/python scripts/make_notebooks.py                   # re-execute notebooks
 ```
 
@@ -130,6 +132,28 @@ All models are chosen by **GroupKFold-by-month cross-validation on the train mon
 - **Bias:** every ML model removes the climatology's −0.32 °C bias (2021 was warmer than the long-term mean).
 
 ![RMSE and skill by depth](reports/figures/phase5/01_rmse_skill_by_depth.png)
+
+### Independent validation against real ARGO floats (Phase 6)
+
+1,279 float profiles on test days, never used for training:
+
+| vs ARGO | RMSE °C | Bias °C |
+|---|---|---|
+| Climatology | 1.119 | −0.42 |
+| **ML model** | **0.718** | **−0.05** |
+| GLORYS (assimilates ARGO; upper bound) | 0.599 | 0.00 |
+
+The model closes **77%** of the gap between the climatology and GLORYS.
+
+### Ocean indicators (vs GLORYS)
+
+| Indicator | ML error | Climatology error |
+|---|---|---|
+| Thermocline depth D20 | **10.9 m** | 20.6 m |
+| Cyclone heat potential TCHP | **9.5 kJ cm⁻²** (r 0.97) | 19.8 kJ cm⁻² |
+| Upper-ocean heat content (0–300 m) | **0.51 GJ m⁻²** | 1.06 GJ m⁻² |
+
+![Cyclone heat potential under Tauktae and Yaas](reports/figures/phase6/03_cyclone_tchp.png)
 
 ## Key findings
 

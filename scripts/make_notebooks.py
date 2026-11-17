@@ -195,6 +195,32 @@ print(f"FINAL MODEL ({fm['model']}, target={fm['target']}): test RMSE {fm['overa
       f"bias {fm['overall']['bias']:.3f} | mean skill {fm['mean_skill_over_depths']:.3f}")
 pd.DataFrame(fm["per_depth"]).T[["rmse","mae","bias","r2","pearson_r","skill_vs_clim","n"]].round(3)"""),
 ],
+"06_evaluation.ipynb": [
+("md", """# 06 · Evaluation: full test grid, ARGO validation, ocean indicators (Phase 6)
+The final model (gradient boosting + climatology feature) predicts **every ocean cell on every test day** (120 days × 11,880 cells).
+It is checked against **real ARGO floats it never saw**, and used to compute oceanographic indicators.
+Code: `src/oceanembed_ml/{evaluation,validation,science}/`; run `scripts/06_evaluate.py`."""),
+("code", SETUP),
+("md", "## 1. Full test set (all 1.43M rows)"),
+("code", """ft = json.loads((ROOT/"results"/"phase6"/"full_test_metrics.json").read_text())
+print(f"rows {ft['rows']:,} | RMSE {ft['overall']['rmse']:.3f} °C | MAE {ft['overall']['mae']:.3f} | bias {ft['overall']['bias']:+.3f} | mean skill {ft['mean_skill_over_depths']:.3f}")
+pd.DataFrame(ft["per_depth"]).T[["rmse","mae","bias","r2","skill_vs_clim","rmse_clim"]].round(3)"""),
+("code", """for f in ["01_map_T100_tauktae.png","02_map_rmse_test_period.png","07_daily_rmse.png"]:
+    display(Image(filename=str(FIGURES/"phase6"/f)))"""),
+("md", "## 2. Independent validation against ARGO floats"),
+("code", """av = json.loads((ROOT/"results"/"phase6"/"argo_validation.json").read_text())
+print({k: av[k] for k in ["n_matchups_cell_days","n_profiles_matched","n_floats","n_delayed_mode","n_salinity_assumed","by_region"]})
+display(pd.DataFrame(av["overall"]).T.round(3))
+display(pd.DataFrame({d: {s: v[s].get("rmse") for s in ("pred","glorys","clim")} for d, v in av["per_depth"].items()}).T.round(3))
+for f in ["04_argo_validation.png","05_argo_locations.png"]:
+    display(Image(filename=str(FIGURES/"phase6"/f)))"""),
+("md", "## 3. Oceanographic indicators (model vs GLORYS, climatology as baseline)"),
+("code", """iv = json.loads((ROOT/"results"/"phase6"/"indicators.json").read_text())
+display(pd.DataFrame({n: {"units": v["units"], "ML RMSE": v["model_vs_glorys"]["rmse"], "ML r": v["model_vs_glorys"]["r"], "ML bias": v["model_vs_glorys"]["bias"],
+                          "clim RMSE": v["clim_vs_glorys"]["rmse"], "skill vs clim": v["skill_vs_clim"]} for n, v in iv.items()}).T)
+for f in ["06_indicator_scatter.png","03_cyclone_tchp.png"]:
+    display(Image(filename=str(FIGURES/"phase6"/f)))"""),
+],
 }
 
 

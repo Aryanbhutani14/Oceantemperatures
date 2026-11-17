@@ -58,8 +58,8 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
 | 3 Cube + EDA | ✅ pushed | `data/processed/cube.nc`, `reports/figures/phase3/`, `docs/phase3_eda.md` |
 | 4 Features | ✅ pushed | `data/final/features/{train,test}.parquet` (2.25M / 1.43M rows, 40 features + 15×(clim, y, a)), `configs/features.yaml`, notebooks 01–04 |
 | 5 Models | ✅ done (awaiting approval) | `results/phase5/*.json`, `models/phase5/*.joblib` (git-ignored), notebook 05. **Final: GB + clim feature** (target chosen by CV, D-024) → test RMSE 0.579 °C, skill 0.636; GB anomaly-only 0.634 |
-| 6 Evaluation + ARGO | ⏳ | per depth, region, season, cyclone; ARGO matchups |
-| 7 Indicators + report | ⏳ | D20, D26, TCHP, MLD; final report and slides |
+| 6 Evaluation + ARGO | ✅ done (awaiting push) | `data/final/predictions/test_predictions.nc` (120 test days × 15 × 101 × 241: pred/glorys/clim), `test_indicators.nc`, `argo_matchups.parquet`, results/phase6 |
+| 7 Dashboard, report, PPT | ⏳ | **The owner will provide the report and PPT formats; do NOT write them before that.** Dashboard first (owner shared a ChatGPT link for inspiration). |
 
 ## Key findings so far (for the report and viva)
 
@@ -132,3 +132,20 @@ A quick-reference file, so anyone picking this up (including the AI assistant) h
   - lat/lon matter most at depth (removing them gives 0.688).
   - Wind forcing, gradients and the embedding add nothing for boosting (they help linear models).
   - The learning curve saturates by 400k rows.
+
+## Phase 6 headline numbers
+
+- **Full test set (1.43M rows):** RMSE 0.579, skill 0.637.
+- **ARGO** (1,279 matchups, 88 floats), RMSE / bias:
+  - ML 0.718 / −0.05
+  - GLORYS 0.599 / 0.00
+  - Climatology 1.119 / −0.42
+  - The model closes 77% of the gap. At 0–10 m ML (0.38) beats GLORYS (0.40).
+- **Indicators**, ML vs clim RMSE:
+  - D20 10.9 vs 20.6 m
+  - D26 9.9 vs 14.9 m
+  - TCHP 9.5 vs 19.8 kJ/cm² (r 0.97)
+  - MLD 11.1 vs 14.6 m
+  - OHC300 0.51 vs 1.06 GJ/m²
+- **Cyclone figure:** Tauktae on 2021-05-14 and Yaas on 2021-05-24 (both in May, a test month).
+- **Owner's priority:** time is short, so avoid extras. Dashboard next, then the report and PPT in the owner's format.
