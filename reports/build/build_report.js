@@ -17,6 +17,9 @@ const T5 = J("results/phase5/test_metrics.json"), CV5 = J("results/phase5/cv_sel
 const TCV = J("results/phase5/target_cv.json"), AB = J("results/phase5/ablation.json"), FT = J("results/phase6/full_test_metrics.json");
 const AR = J("results/phase6/argo_validation.json"), IND = J("results/phase6/indicators.json"), TOL = J("results/phase6/tolerance_accuracy.json");
 const AU = J("results/validation/audit.json");
+const TEAM = JSON.parse(fs.readFileSync(path.join(__dirname, "team.json"), "utf8"));
+const INTERP = {"final_gb_clim_feature": ["Boosting ensemble", "Medium"], "ensemble_avg": ["Averaging ensemble", "Low"], "gradient_boosting": ["Boosting ensemble", "Medium"], "random_forest": ["Bagging ensemble", "Medium"], "bagging_trees": ["Bagging ensemble", "Low"], "pca_regression": ["PCA + boosting", "Medium"], "svr_rbf": ["Kernel method", "Low"], "knn": ["Instance-based", "Medium"], "ridge": ["Linear, L2", "High"], "linear_regression": ["Linear", "High"], "lasso": ["Linear, L1", "High"], "linear_gd_scratch": ["Linear (GD)", "High"], "decision_tree": ["Tree", "High"], "sst_only_linear": ["Baseline", "High"], "climatology": ["Baseline", "High"]};
+
 const CL = J("results/phase7/classification.json"), RG = J("results/phase7/regularization.json"), FS = J("data/audit/features_summary.json");
 const QC = J("data/audit/harmonisation_qc.json"), EDA = J("data/audit/eda_stats.json"), OUTL = J("data/audit/outlier_report.json");
 const f2 = (x) => Number(x).toFixed(2), f3 = (x) => Number(x).toFixed(3), n0 = (x) => Number(x).toLocaleString("en-US");
@@ -313,6 +316,9 @@ body.push(H1("7. Experimental Results"),
   }), [3, 0.9, 0.9, 0.9, 0.8, 0.7, 1], { highlight: (r) => r[0].startsWith("Final") }),
   tcap(`All models scored on the same ${n0(T5.eval_subset.rows)} test rows (absolute temperature, sorted by RMSE). R² is shown at 100 m because R² pooled over all depths is inflated by the large vertical temperature range.`),
   P(`Every model beats the climatology. Tree ensembles are the strongest family: a single decision tree reaches ${f3(T5.models.decision_tree.overall.rmse)} °C while a random forest reaches ${f3(T5.models.random_forest.overall.rmse)} °C, a clear illustration of variance reduction by averaging. Ridge, Lasso and OLS are almost identical because 400,000 training rows strongly constrain 40 coefficients, so there is little to regularise. The from-scratch gradient-descent model matches the closed-form solution (${f3(T5.models.linear_gd_scratch.overall.rmse)} vs ${f3(T5.models.linear_regression.overall.rmse)} °C). SVR is accurate but needed about ${Math.round(T5.models.svr_rbf.predict_seconds_200k / 60)} minutes to predict 200,000 rows, against ${Math.round(T5.models.gradient_boosting.predict_seconds_200k)} seconds for boosting.`),
+  table(["Model", "Type", "Train time (s)", "Predict 200k rows (s)", "Interpretability"], order.map((n) => [lab[n] || n, INTERP[n][0], n === "climatology" ? "—" : String(Math.round(T5.models[n].fit_seconds)), n === "climatology" ? "—" : String(Math.round(T5.models[n].predict_seconds_200k)), INTERP[n][1]]), [3, 1.6, 1, 1.2, 1.2]),
+  tcap("Practical comparison of the models: computational cost and interpretability."),
+  P("Linear models train in seconds and are fully interpretable (each coefficient has a meaning), but they cannot capture interactions such as sea level acting differently in the Arabian Sea and the Bay of Bengal. Tree ensembles capture these and are the most accurate, at a moderate cost, and still provide feature importances. SVR is accurate but needs about 45 minutes to predict 200,000 rows, which makes it impractical for daily maps of 11,880 cells. Gradient boosting offers the best balance of accuracy and cost, which, together with the cross-validation result, is why it was selected."),
   ...figure(IMG("phase5/01_rmse_skill_by_depth.png"), 6.3, "RMSE (left) and skill versus climatology (right) by depth for all models, test months."),
   H2("7.3 Final model: accuracy by depth"),
   table(["Depth (m)", "0", "10", "30", "50", "75", "100", "150", "200", "300", "500", "1000"],
@@ -391,10 +397,8 @@ body.push(H1("7. Experimental Results"),
 
 // ---------------- 8. Team matrix
 body.push(H1("8. Team Responsibility/Self-contribution Matrix"),
-  table(["Activity", "Tanmay Sangwan", "Tanmay Kandwal", "Aryan Bhutani", "Prashast"],
-    ["Data Preprocessing & EDA", "Feature Engineering", "Model building", "Model comparisons", "Ensemble", "Hyperparameter tuning/Cross validation", "Classification and regularization", "ARGO validation and indicators", "Presentation/Interface UI", "Deployment", "Documentation"].map((a) => [a, "", "", "", ""]),
-    [2.6, 1.1, 1.1, 1.1, 1.1]),
-  tcap("Contribution of each team member."),
+  table(["Activity", ...TEAM.members], TEAM.activities.map(([a, lead]) => [a, ...TEAM.members.map((m) => (m === lead ? "Lead" : "Support"))]), [2.6, 1.1, 1.1, 1.1, 1.1]),
+  tcap("Contribution of each team member (each member leads three activities and supports the rest)."),
 );
 
 // ---------------- 9. Conclusions

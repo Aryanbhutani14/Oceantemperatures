@@ -1,0 +1,18 @@
+{
+  "members": ["Tanmay Sangwan", "Tanmay Kandwal", "Aryan Bhutani", "Prashast"],
+  "note": "Each member leads 3 activities and supports the rest (equal split).",
+  "activities": [
+    ["Data acquisition and harmonisation", "Tanmay Sangwan"],
+    ["Data preprocessing and EDA", "Tanmay Sangwan"],
+    ["Feature engineering", "Tanmay Kandwal"],
+    ["Model building", "Aryan Bhutani"],
+    ["Model comparisons", "Prashast"],
+    ["Ensemble", "Prashast"],
+    ["Hyperparameter tuning / cross-validation", "Aryan Bhutani"],
+    ["Classification and regularization", "Tanmay Kandwal"],
+    ["ARGO validation and ocean indicators", "Prashast"],
+    ["Presentation / interface UI", "Tanmay Kandwal"],
+    ["Code packaging and testing", "Aryan Bhutani"],
+    ["Documentation (report)", "Tanmay Sangwan"]
+  ]
+}

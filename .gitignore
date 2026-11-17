@@ -40,3 +40,7 @@ reports/build/node_modules/
 reports/*.pptx
 reports/*.docx
 reports/*.pdf
+
+# Local-only deliverables: code ZIP and viva guide
+submission/
+reports/viva/

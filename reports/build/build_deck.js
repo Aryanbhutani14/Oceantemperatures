@@ -21,6 +21,8 @@ const AB = J("results/phase5/ablation.json");
 const FT = J("results/phase6/full_test_metrics.json");
 const AR = J("results/phase6/argo_validation.json");
 const AU = J("results/validation/audit.json");
+const TEAM = JSON.parse(fs.readFileSync(path.join(__dirname, "team.json"), "utf8"));
+const INTERP = {"final_gb_clim_feature": ["Boosting ensemble", "Medium"], "ensemble_avg": ["Averaging ensemble", "Low"], "gradient_boosting": ["Boosting ensemble", "Medium"], "random_forest": ["Bagging ensemble", "Medium"], "bagging_trees": ["Bagging ensemble", "Low"], "pca_regression": ["PCA + boosting", "Medium"], "svr_rbf": ["Kernel method", "Low"], "knn": ["Instance-based", "Medium"], "ridge": ["Linear, L2", "High"], "linear_regression": ["Linear", "High"], "lasso": ["Linear, L1", "High"], "linear_gd_scratch": ["Linear (GD)", "High"], "decision_tree": ["Tree", "High"], "sst_only_linear": ["Baseline", "High"], "climatology": ["Baseline", "High"]};
 const REFS = JSON.parse(fs.readFileSync(path.join(__dirname, "refs.json"), "utf8"));
 const IND = J("results/phase6/indicators.json");
 const CL = J("results/phase7/classification.json");
@@ -276,32 +278,51 @@ pres.addSection({ title: "Methodology" });
   s.addNotes("Ocean data is strongly autocorrelated, so a random split would put near-identical neighbouring days in both train and test and inflate the scores. Whole-month blocks with buffers avoid that. Model and target choices were made on cross-validation only; the test months were touched once.");
 }
 
-// ================================================================ Slide 7: regression results
+// ================================================================ Slide 7a: results at a glance
 pres.addSection({ title: "Results" });
 {
   const s = content("Results");
-  s.addText("Experimental results: regression (all 13 models)", { placeholder: "title" });
-  const names = Object.keys(T5.models).sort((a, b) => T5.models[b].overall.rmse - T5.models[a].overall.rmse);
-  const label = (n) => ({ final_gb_clim_feature: "Final: boosting + clim feature", gradient_boosting: "Gradient Boosting", random_forest: "Random Forest", bagging_trees: "Bagging", pca_regression: "PCA regression", svr_rbf: "SVR (RBF)", knn: "KNN", ridge: "Ridge", lasso: "Lasso", linear_regression: "Linear Regression", linear_gd_scratch: "Linear (GD from scratch)", decision_tree: "Decision Tree", sst_only_linear: "SST-only linear", climatology: "Climatology", ensemble_avg: "Avg ensemble (not adopted)" }[n] || n);
-  const rowsSorted = names.slice().reverse();
-  const rows = [[th("Model"), th("CV RMSE*"), th("Test RMSE °C"), th("Skill"), th("RMSE 100 m")]].concat(
-    rowsSorted.map((n) => {
-      const m = T5.models[n];
-      const cv = n === "final_gb_clim_feature" ? TCV.variants["anomaly+clim_feat"].cv_rmse_mean : (CV5[n] || {}).best_cv_rmse;
-      const hi = n === "final_gb_clim_feature" ? { bold: true, color: HEX.accent2 } : {};
-      return [td(label(n), hi), td(cv ? f3(cv) : "—", hi), td(f3(m.overall.rmse), hi), td(f2(m.mean_skill_over_depths), hi), td(f2(m.per_depth["100"].rmse), hi)];
-    }));
-  s.addTable(zebra(rows), { x: M, y: 1.2, w: 6.6, colW: [2.75, 0.95, 1.15, 0.75, 1.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.31, margin: [0.01, 0.05, 0.01, 0.05], fontSize: 11 });
-  s.addText("* CV RMSE of the anomaly on train months (GroupKFold by month); the final model's CV is on absolute temperature. Skill = 1 − MSE/MSE(climatology). Test = identical 200k rows.",
-    { x: M, y: 6.5, w: 6.6, h: 0.45, fontSize: 10, color: C.accent5, margin: 0, isTextBox: true });
-  s.addChart(pres.charts.BAR, [{ name: "Test RMSE (°C)", labels: names.map(label), values: names.map((n) => Number(T5.models[n].overall.rmse.toFixed(3))) }], {
-    x: 7.35, y: 1.2, w: 5.5, h: 5.7, barDir: "bar", showTitle: true, title: "Test RMSE (°C), lower is better", titleFontSize: 13, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
-    chartColors: names.map((n) => (n === "final_gb_clim_feature" ? HEX.accent1 : n === "climatology" ? "595959" : "A6A6A6")),
-    showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 9, dataLabelColor: HEX.dk1, dataLabelFontFace: "+mn-lt", dataLabelFormatCode: "0.000",
+  s.addText("Experimental results: at a glance", { placeholder: "title" });
+  const hard = AU.B_stricter_tests.setups.B3_temporal_and_spatial;
+  const red = Math.round(100 * (1 - FT.overall.rmse / T5.models.climatology.overall.rmse));
+  const cards = [
+    [`${f2(FT.overall.rmse)} °C`, `test error (RMSE) of the final model; climatology ${f2(T5.models.climatology.overall.rmse)} °C`],
+    [`${red}%`, "lower error than the climatology baseline"],
+    [`${f2(hard.rmse)} °C`, `realistic error on unseen months and regions (climatology ${f2(hard.rmse_clim)} °C)`],
+    [`${f2(AR.overall.pred.rmse)} °C`, `error against ${AR.n_matchups_cell_days.toLocaleString("en-US")} independent ARGO float profiles`],
+  ];
+  cards.forEach(([b, l], i) => stat(s, M + i * 3.13, 1.2, 2.95, b, l, i === 2 ? C.accent3 : C.accent1, `glance ${i}`));
+  const dz = ["0", "5", "10", "20", "30", "50", "75", "100", "125", "150", "200", "300", "500", "700", "1000"];
+  s.addChart(pres.charts.BAR, [
+    { name: "Climatology", labels: dz.map((d) => `${d} m`), values: dz.map((d) => Number(FT.per_depth[d].rmse_clim.toFixed(2))) },
+    { name: "Final model", labels: dz.map((d) => `${d} m`), values: dz.map((d) => Number(FT.per_depth[d].rmse.toFixed(2))) },
+  ], {
+    x: M, y: 3.0, w: W - 2 * M, h: 3.85, barDir: "col", barGrouping: "clustered", barGapWidthPct: 60,
+    showTitle: true, title: "Error (RMSE, °C) at each depth: the thermocline (75–150 m) is hardest", titleFontSize: 13, titleColor: HEX.dk1, titleFontFace: "+mn-lt",
+    chartColors: ["A6A6A6", HEX.accent1], showLegend: true, legendPos: "t", legendFontSize: 11, legendFontFace: "+mn-lt",
+    showValue: true, dataLabelPosition: "outEnd", dataLabelFontSize: 8, dataLabelColor: HEX.dk1, dataLabelFontFace: "+mn-lt", dataLabelFormatCode: "0.00",
     catAxisLabelColor: HEX.dk1, valAxisLabelColor: HEX.accent5, catAxisLabelFontSize: 10, valAxisLabelFontSize: 9, catAxisLabelFontFace: "+mn-lt", valAxisLabelFontFace: "+mn-lt",
-    valGridLine: { color: "D5E3EA", size: 0.5 }, catGridLine: { style: "none" }, showLegend: false, valAxisMinVal: 0, valAxisMaxVal: 1.1,
+    valGridLine: { color: "E0E0E0", size: 0.5 }, catGridLine: { style: "none" }, valAxisMinVal: 0,
   });
-  s.addNotes(`Every model beats climatology. Tree ensembles win (bias-variance: a single tree ${f3(T5.models.decision_tree.overall.rmse)} vs random forest ${f3(T5.models.random_forest.overall.rmse)}). The final model adds the climatology as a feature, a choice made by cross-validation, and reaches ${f3(FM.overall.rmse)} °C. Ridge = Lasso = OLS here because 400k rows >> 40 features, so there is nothing to overfit.`);
+  s.addNotes(`Four numbers to remember: test error ${f2(FT.overall.rmse)} °C (climatology ${f2(T5.models.climatology.overall.rmse)}), ${red}% better than climatology, about ${f2(hard.rmse)} °C on genuinely new months and regions, and ${f2(AR.overall.pred.rmse)} °C against real ARGO floats. The chart shows the error is largest in the thermocline at 75–150 m, exactly where the EDA showed the most variability.`);
+}
+
+// ================================================================ Slide 7b: model comparison
+{
+  const s = content("Results");
+  s.addText("Model comparison: accuracy, cost and interpretability", { placeholder: "title" });
+  const names = Object.keys(T5.models).sort((a, b) => T5.models[a].overall.rmse - T5.models[b].overall.rmse);
+  const label = (n) => ({ final_gb_clim_feature: "Final: boosting + clim feature", gradient_boosting: "Gradient Boosting", random_forest: "Random Forest", bagging_trees: "Bagging", pca_regression: "PCA regression", svr_rbf: "SVR (RBF)", knn: "KNN", ridge: "Ridge", lasso: "Lasso", linear_regression: "Linear Regression", linear_gd_scratch: "Linear (GD from scratch)", decision_tree: "Decision Tree", sst_only_linear: "SST-only linear", climatology: "Climatology", ensemble_avg: "Avg ensemble (not adopted)" }[n] || n);
+  const secs = (x) => (x == null ? "—" : x >= 60 ? `${Math.round(x / 60)} min` : `${Math.round(x)} s`);
+  const rows = [[th("Model"), th("Type"), th("CV RMSE"), th("Test RMSE °C"), th("Skill"), th("Train time"), th("Predict 200k"), th("Interpretability")]].concat(names.map((n) => {
+    const m = T5.models[n], hi = n === "final_gb_clim_feature" ? { bold: true, color: HEX.accent1 } : {};
+    const cv = n === "final_gb_clim_feature" ? TCV.variants["anomaly+clim_feat"].cv_rmse_mean : (CV5[n] || {}).best_cv_rmse;
+    return [td(label(n), hi), td(INTERP[n][0], hi), td(cv ? f3(cv) : "—", hi), td(f3(m.overall.rmse), hi), td(f2(m.mean_skill_over_depths), hi), td(n === "climatology" ? "—" : secs(m.fit_seconds), hi), td(n === "climatology" ? "—" : secs(m.predict_seconds_200k), hi), td(INTERP[n][1], hi)];
+  }));
+  s.addTable(zebra(rows), { x: M, y: 1.15, w: W - 2 * M, colW: [3.05, 1.85, 1.0, 1.25, 0.8, 1.2, 1.3, 1.88], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.32, margin: [0.01, 0.06, 0.01, 0.06], fontSize: 11 });
+  s.addText("All models scored on the same 200,000 test rows. CV RMSE: GroupKFold by month on training months. Selection used CV only; the averaging ensemble gained < 1% on CV, so the simpler boosting model was kept. SVR is accurate but very slow to predict.",
+    { x: M, y: 6.55, w: W - 2 * M, h: 0.42, fontSize: 10, color: C.accent5, margin: 0, isTextBox: true });
+  s.addNotes(`Every model beats climatology. Tree ensembles are most accurate; linear models are nearly as good and far easier to explain. A single decision tree (${f3(T5.models.decision_tree.overall.rmse)}) is clearly worse than a forest (${f3(T5.models.random_forest.overall.rmse)}): the bias–variance trade-off. Ridge = Lasso = OLS because 400k rows easily constrain 40 coefficients.`);
 }
 
 // ================================================================ Slide 8: classification results
@@ -406,9 +427,9 @@ pres.addSection({ title: "Demonstration" });
 {
   const s = content("Demonstration");
   s.addText("Team responsibility and self-contribution matrix", { placeholder: "title" });
-  const acts = ["Data acquisition and harmonisation", "Data preprocessing and EDA", "Feature engineering", "Model building", "Model comparisons", "Ensemble", "Hyperparameter tuning / cross-validation", "Classification and regularization", "ARGO validation and indicators", "Presentation / interface UI", "Documentation"];
-  const rows = [[th("Activity"), th("Tanmay Sangwan"), th("Tanmay Kandwal"), th("Aryan Bhutani"), th("Prashast")]].concat(acts.map((a) => [td(a), td(""), td(""), td(""), td("")]));
-  s.addTable(zebra(rows), { x: M, y: 1.2, w: W - 2 * M, colW: [4.33, 2.0, 2.0, 2.0, 2.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.45, margin: 0.06 });
+  const rows = [[th("Activity"), ...TEAM.members.map((m) => th(m))]].concat(TEAM.activities.map(([a, lead]) => [td(a), ...TEAM.members.map((m) => td(m === lead ? "Lead" : "Support", m === lead ? { bold: true, color: HEX.accent1 } : { color: HEX.accent5 }))]));
+  s.addTable(zebra(rows), { x: M, y: 1.15, w: W - 2 * M, colW: [4.33, 2.0, 2.0, 2.0, 2.0], fontFace: THEME.bodyFontFace, border: { type: "solid", pt: 0.5, color: "A6A6A6" }, rowH: 0.42, margin: 0.05 });
+  s.addText(TEAM.note, { x: M, y: 6.6, w: 8, h: 0.3, fontSize: 11, color: C.accent5, margin: 0, isTextBox: true });
   s.addNotes("Each member's contribution per activity.");
 }
 
